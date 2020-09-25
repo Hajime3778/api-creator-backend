@@ -19,9 +19,9 @@ WORKDIR /app
 
 EXPOSE 3000
 
-COPY --from=builder /app/go-mysql-api /app
+COPY --from=builder /app/api-creator-backend /app
 
-CMD /app/go-mysql-api
+CMD /app/api-creator-backend
 
 # FROM mysql:5.7
 

@@ -3,13 +3,14 @@ package handler_test
 import (
 	"bytes"
 	"encoding/json"
-	"go-mysql-api/pkg/domain"
-	"go-mysql-api/pkg/user/handler"
-	"go-mysql-api/test/mocks"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/Hajime3778/api-creator-backend/pkg/user/handler"
+	"github.com/Hajime3778/api-creator-backend/test/mocks"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/go-playground/assert.v1"

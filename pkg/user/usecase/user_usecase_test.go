@@ -1,11 +1,12 @@
 package usecase_test
 
 import (
-	"go-mysql-api/pkg/domain"
-	"go-mysql-api/pkg/user/usecase"
-	"go-mysql-api/test/mocks"
 	"testing"
 	"time"
+
+	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/Hajime3778/api-creator-backend/pkg/user/usecase"
+	"github.com/Hajime3778/api-creator-backend/test/mocks"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -1,5 +1,5 @@
 
-BINARY=go-mysql-api
+BINARY=api-creator-backend
 test:
 	go test -v -cover -covermode=atomic ./...
 
@@ -13,7 +13,7 @@ clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 
 docker:
-	docker build -t go-mysql-api .
+	docker build -t ${BINARY} .
 
 run:
 	docker-compose -f ./docker/docker-compose.yml up --build -d

@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"go-mysql-api/pkg/domain"
-	"go-mysql-api/pkg/user/repository"
+	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/Hajime3778/api-creator-backend/pkg/user/repository"
 )
 
 // UserUsecase usecase

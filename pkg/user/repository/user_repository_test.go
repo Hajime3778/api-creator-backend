@@ -1,14 +1,15 @@
 package repository_test
 
 import (
-	"go-mysql-api/pkg/domain"
-	"go-mysql-api/pkg/infrastructure/database"
-	"go-mysql-api/pkg/user/repository"
 	"regexp"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
+	"github.com/Hajime3778/api-creator-backend/pkg/user/repository"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"

@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"go-mysql-api/pkg/domain"
-	"go-mysql-api/pkg/infrastructure/database"
+	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 
 	"github.com/jinzhu/gorm"
 )

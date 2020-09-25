@@ -4,4 +4,4 @@ config.ini
 
 # 実行ファイル
 __debug_bin
-go-mysql-api
+api-creator-backend

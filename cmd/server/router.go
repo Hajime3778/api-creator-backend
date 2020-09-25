@@ -1,9 +1,9 @@
 package server
 
 import (
-	"go-mysql-api/pkg/user/handler"
-	"go-mysql-api/pkg/user/repository"
-	"go-mysql-api/pkg/user/usecase"
+	"github.com/Hajime3778/api-creator-backend/pkg/user/handler"
+	"github.com/Hajime3778/api-creator-backend/pkg/user/repository"
+	"github.com/Hajime3778/api-creator-backend/pkg/user/usecase"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

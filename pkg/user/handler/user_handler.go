@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"go-mysql-api/pkg/domain"
-	"go-mysql-api/pkg/user/usecase"
+	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/Hajime3778/api-creator-backend/pkg/user/usecase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"

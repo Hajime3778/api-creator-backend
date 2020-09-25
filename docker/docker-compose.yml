@@ -5,7 +5,7 @@ services:
     build:
       context: ../
       dockerfile: Dockerfile
-    container_name: go-mysql-api
+    container_name: api-creator-backend
     ports:
       - 3000:3000
     depends_on:
@@ -19,7 +19,7 @@ services:
     build:
       context: ./mysql
       dockerfile: Dockerfile
-    container_name: go-mysql-api-mysql
+    container_name: api-creator-backend-mysql
     image: mysql:5.7
     restart: always
     volumes:
@@ -39,7 +39,7 @@ services:
       retries: 10
 
   pma: # phpMyAdmin container
-    container_name: go-mysql-api-pma
+    container_name: api-creator-backend-pma
     image: phpmyadmin/phpmyadmin:latest
     restart: always
     environment:

@@ -1,4 +1,4 @@
-module go-mysql-api
+module github.com/Hajime3778/api-creator-backend
 
 go 1.14
 

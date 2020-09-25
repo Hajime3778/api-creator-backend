@@ -2,8 +2,9 @@ package database
 
 import (
 	"fmt"
-	"go-mysql-api/pkg/infrastructure/config"
 	"net/url"
+
+	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/config"
 
 	"github.com/jinzhu/gorm"
 )

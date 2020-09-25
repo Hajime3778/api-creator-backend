@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"go-mysql-api/pkg/domain"
+	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 
 	"github.com/stretchr/testify/mock"
 )
