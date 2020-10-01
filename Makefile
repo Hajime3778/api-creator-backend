@@ -19,6 +19,6 @@ run:
 	docker-compose -f ./docker/docker-compose.yml up --build -d
 
 stop:
-	docker-compose -f ./docker/docker-compose.yml down
+	docker-compose -f ./docker/docker-compose.yml down --volumes
 
 .PHONY: test docker run stop build make
