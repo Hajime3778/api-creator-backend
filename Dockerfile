@@ -17,7 +17,7 @@ RUN apk update && apk upgrade && \
 
 WORKDIR /app 
 
-EXPOSE 3000
+EXPOSE 4000
 
 COPY --from=builder /app/api-creator-backend /app
 
