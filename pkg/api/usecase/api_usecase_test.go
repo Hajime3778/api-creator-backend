@@ -4,118 +4,129 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Hajime3778/api-creator-backend/pkg/api/usecase"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
-	"github.com/Hajime3778/api-creator-backend/pkg/user/usecase"
 	"github.com/Hajime3778/api-creator-backend/test/mocks"
+	"github.com/google/uuid"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetAll(t *testing.T) {
-	mockUsers := make([]domain.User, 0)
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
-	mockUser.CreatedAt = time.Now()
-	mockUser.UpdatedAt = time.Now()
-	mockUsers = append(mockUsers, mockUser)
+	apiId, _ := uuid.NewRandom()
+
+	mockAPIs := make([]domain.API, 0)
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "name"
+	mockAPI.Description = "test"
+	mockAPI.CreatedAt = time.Now()
+	mockAPI.UpdatedAt = time.Now()
+	mockAPIs = append(mockAPIs, mockAPI)
 
 	// モック
-	mockUserRepo := new(mocks.UserRepository)
+	mockAPIRepo := new(mocks.APIRepository)
 
 	t.Run("test1", func(t *testing.T) {
-		mockUserRepo.On("GetAll").Return(mockUsers, nil).Once()
-		usecase := usecase.NewUserUsecase(mockUserRepo)
+		mockAPIRepo.On("GetAll").Return(mockAPIs, nil).Once()
+		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
 		users, err := usecase.GetAll()
 
 		assert.NoError(t, err)
 		assert.NotNil(t, users)
 
-		mockUserRepo.AssertExpectations(t)
+		mockAPIRepo.AssertExpectations(t)
 	})
 }
 
 func TestGetByID(t *testing.T) {
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
-	mockUser.CreatedAt = time.Now()
-	mockUser.UpdatedAt = time.Now()
+	apiId, _ := uuid.NewRandom()
 
-	mockUserRepo := new(mocks.UserRepository)
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "name"
+	mockAPI.Description = "test"
+	mockAPI.CreatedAt = time.Now()
+	mockAPI.UpdatedAt = time.Now()
+
+	mockAPIRepo := new(mocks.APIRepository)
 
 	t.Run("test1", func(t *testing.T) {
-		mockUserRepo.On("GetByID", mockUser.ID).Return(mockUser, nil).Once()
-		usecase := usecase.NewUserUsecase(mockUserRepo)
+		mockAPIRepo.On("GetByID", mockAPI.ID).Return(mockAPI, nil).Once()
+		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		user, err := usecase.GetByID(mockUser.ID)
+		user, err := usecase.GetByID(mockAPI.ID)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, user)
 
-		mockUserRepo.AssertExpectations(t)
+		mockAPIRepo.AssertExpectations(t)
 	})
 }
 
 func TestCreate(t *testing.T) {
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
+	apiId, _ := uuid.NewRandom()
 
-	mockUserRepo := new(mocks.UserRepository)
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "name"
+	mockAPI.Description = "test"
+
+	mockAPIRepo := new(mocks.APIRepository)
 
 	t.Run("test1", func(t *testing.T) {
-		mockUserRepo.On("Create", mockUser).Return(nil).Once()
-		usecase := usecase.NewUserUsecase(mockUserRepo)
+		mockAPIRepo.On("Create", mockAPI).Return(nil).Once()
+		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		_, err := usecase.Create(mockUser)
+		_, err := usecase.Create(mockAPI)
 
 		assert.NoError(t, err)
 
-		mockUserRepo.AssertExpectations(t)
+		mockAPIRepo.AssertExpectations(t)
 	})
 }
 
 func TestUpdate(t *testing.T) {
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
+	apiId, _ := uuid.NewRandom()
+
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "name"
+	mockAPI.Description = "test"
 
 	// モック
-	mockUserRepo := new(mocks.UserRepository)
+	mockAPIRepo := new(mocks.APIRepository)
 
 	t.Run("test1", func(t *testing.T) {
-		mockUserRepo.On("Update", mockUser).Return(nil).Once()
-		usecase := usecase.NewUserUsecase(mockUserRepo)
+		mockAPIRepo.On("Update", mockAPI).Return(nil).Once()
+		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		err := usecase.Update(mockUser)
+		err := usecase.Update(mockAPI)
 
 		assert.NoError(t, err)
 
-		mockUserRepo.AssertExpectations(t)
+		mockAPIRepo.AssertExpectations(t)
 	})
 }
 
 func TestDelete(t *testing.T) {
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
-	mockUserRepo := new(mocks.UserRepository)
+	apiId, _ := uuid.NewRandom()
+
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "name"
+	mockAPI.Description = "test"
+	mockAPIRepo := new(mocks.APIRepository)
 
 	t.Run("test1", func(t *testing.T) {
-		mockUserRepo.On("Delete", mockUser.ID).Return(nil).Once()
-		usecase := usecase.NewUserUsecase(mockUserRepo)
+		mockAPIRepo.On("Delete", mockAPI.ID).Return(nil).Once()
+		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		err := usecase.Delete(mockUser.ID)
+		err := usecase.Delete(mockAPI.ID)
 
 		assert.NoError(t, err)
 
-		mockUserRepo.AssertExpectations(t)
+		mockAPIRepo.AssertExpectations(t)
 	})
 }

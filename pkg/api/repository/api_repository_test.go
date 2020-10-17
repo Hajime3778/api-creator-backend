@@ -2,14 +2,14 @@ package repository_test
 
 import (
 	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/Hajime3778/api-creator-backend/pkg/api/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
-	"github.com/Hajime3778/api-creator-backend/pkg/user/repository"
+	"github.com/google/uuid"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -31,96 +31,94 @@ func setUpMockDB() (sqlmock.Sqlmock, *database.DB) {
 func TestGetAll(t *testing.T) {
 	mock, db := setUpMockDB()
 
-	query := regexp.QuoteMeta("SELECT * FROM `users`")
-	rows := sqlmock.NewRows([]string{"id", "name", "email", "created_at", "updated_at"}).
-		AddRow(1, "mock user", "mock@mock.com", time.Now(), time.Now())
+	query := regexp.QuoteMeta("SELECT * FROM `apis`")
+	rows := sqlmock.NewRows([]string{"id", "name", "description", "created_at", "updated_at"}).
+		AddRow(1, "name", "test", time.Now(), time.Now())
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	userRepository := repository.NewUserRepository(db)
+	apiRepository := repository.NewAPIRepository(db)
 
-	user, err := userRepository.GetAll()
+	api, err := apiRepository.GetAll()
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
+	assert.NotNil(t, api)
 }
 
 func TestGetByID(t *testing.T) {
 	mock, db := setUpMockDB()
+	apiId, _ := uuid.NewRandom()
 
-	id := 1
-
-	query := regexp.QuoteMeta("SELECT * FROM `users` WHERE (`users`.`id` = " + strconv.Itoa(id) +
-		") ORDER BY `users`.`id` ASC LIMIT 1")
+	query := regexp.QuoteMeta("SELECT * FROM `apis` WHERE (id = ?) ORDER BY `apis`.`id` ASC LIMIT 1")
 	rows := sqlmock.NewRows([]string{"id", "name", "email", "created_at", "updated_at"}).
-		AddRow(1, "mock user", "mock@mock.com", time.Now(), time.Now())
+		AddRow(apiId.String(), "mock api", "mock@mock.com", time.Now(), time.Now())
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	userRepository := repository.NewUserRepository(db)
+	apiRepository := repository.NewAPIRepository(db)
 
-	user, err := userRepository.GetByID(id)
+	api, err := apiRepository.GetByID(apiId.String())
 	assert.NoError(t, err)
-	assert.NotNil(t, user)
+	assert.NotNil(t, api)
 }
 
 func TestCreate(t *testing.T) {
 	mock, db := setUpMockDB()
+	apiId, _ := uuid.NewRandom()
 
-	mockUser := domain.User{}
-	mockUser.ID = 0
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
-	mockUser.CreatedAt = time.Time{}
-	mockUser.UpdatedAt = time.Time{}
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "name"
+	mockAPI.Description = "test"
+	mockAPI.CreatedAt = time.Time{}
+	mockAPI.UpdatedAt = time.Time{}
 
 	mock.ExpectBegin()
-	query := regexp.QuoteMeta("INSERT INTO `users` (`name`,`email`,`created_at`,`updated_at`) VALUES (?,?,?,?)")
+	query := regexp.QuoteMeta("INSERT INTO `apis` (`id`,`name`,`description`,`created_at`,`updated_at`) VALUES (?,?,?,?,?)")
 	mock.ExpectExec(query).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	userRepository := repository.NewUserRepository(db)
+	apiRepository := repository.NewAPIRepository(db)
 
-	_, err := userRepository.Create(mockUser)
+	_, err := apiRepository.Create(mockAPI)
 	assert.NoError(t, err)
 }
 
 func TestUpdate(t *testing.T) {
 	mock, db := setUpMockDB()
+	apiId, _ := uuid.NewRandom()
 
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "name"
+	mockAPI.Description = "test"
 
-	selectQuery := regexp.QuoteMeta("SELECT * FROM `users` WHERE (`users`.`id` = " +
-		strconv.Itoa(mockUser.ID) +
-		") ORDER BY `users`.`id` ASC LIMIT 1")
-	selectRows := sqlmock.NewRows([]string{"id", "name", "email", "created_at", "updated_at"}).
-		AddRow(1, "mock user", "mock@mock.com", mockUser.CreatedAt, mockUser.UpdatedAt)
+	selectQuery := regexp.QuoteMeta("SELECT * FROM `apis` WHERE (id = ?) ORDER BY `apis`.`id` ASC LIMIT 1")
+	selectRows := sqlmock.NewRows([]string{"id", "name", "description", "created_at", "updated_at"}).
+		AddRow(apiId.String(), "name", "test", mockAPI.CreatedAt, mockAPI.UpdatedAt)
 	mock.ExpectQuery(selectQuery).WillReturnRows(selectRows)
 
 	mock.ExpectBegin()
-	query := regexp.QuoteMeta("UPDATE `users` SET `name` = ?, `email` = ?, `updated_at` = ? WHERE `users`.`id` = ?")
+	query := regexp.QuoteMeta("UPDATE `apis` SET `name` = ?, `description` = ?, `updated_at` = ? WHERE `apis`.`id` = ?")
 	mock.ExpectExec(query).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	userRepository := repository.NewUserRepository(db)
+	apiRepository := repository.NewAPIRepository(db)
 
-	err := userRepository.Update(mockUser)
+	err := apiRepository.Update(mockAPI)
 	assert.NoError(t, err)
 }
 
 func TestDelete(t *testing.T) {
 	mock, db := setUpMockDB()
-	id := 1
+	apiId, _ := uuid.NewRandom()
 
 	mock.ExpectBegin()
-	query := regexp.QuoteMeta("DELETE FROM `users` WHERE `users`.`id` = ?")
-	mock.ExpectExec(query).WithArgs(id).WillReturnResult(sqlmock.NewResult(int64(id), 1))
+	query := regexp.QuoteMeta("DELETE FROM `apis` WHERE `apis`.`id` = ?")
+	mock.ExpectExec(query).WithArgs(apiId.String()).WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
 
-	userRepository := repository.NewUserRepository(db)
+	apiRepository := repository.NewAPIRepository(db)
 
-	err := userRepository.Delete(1)
+	err := apiRepository.Delete(apiId.String())
 	assert.NoError(t, err)
 }

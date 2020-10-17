@@ -8,9 +8,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Hajime3778/api-creator-backend/pkg/api/handler"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
-	"github.com/Hajime3778/api-creator-backend/pkg/user/handler"
 	"github.com/Hajime3778/api-creator-backend/test/mocks"
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/go-playground/assert.v1"
@@ -24,116 +25,125 @@ func newMockRouter() (*gin.Engine, *gin.RouterGroup) {
 }
 
 func TestGetAll(t *testing.T) {
+	apiId, _ := uuid.NewRandom()
 
-	mockUsers := make([]domain.User, 0)
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
-	mockUser.CreatedAt = time.Now()
-	mockUser.UpdatedAt = time.Now()
-	mockUsers = append(mockUsers, mockUser)
+	mockAPIs := make([]domain.API, 0)
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "mockapi"
+	mockAPI.Description = "mock@mock.com"
+	mockAPI.CreatedAt = time.Now()
+	mockAPI.UpdatedAt = time.Now()
+	mockAPIs = append(mockAPIs, mockAPI)
 
 	gin.SetMode(gin.TestMode)
 
-	mockUserUsecase := new(mocks.UserUsecase)
-	mockUserUsecase.On("GetAll").Return(mockUsers, nil).Once()
+	mockAPIUsecase := new(mocks.APIUsecase)
+	mockAPIUsecase.On("GetAll").Return(mockAPIs, nil).Once()
 
 	router, rg := newMockRouter()
-	handler.NewUserHandler(rg, mockUserUsecase)
+	handler.NewAPIHandler(rg, mockAPIUsecase)
 
 	getAllRes := httptest.NewRecorder()
-	getAllReq, _ := http.NewRequest("GET", "/api/v1/users", nil)
+	getAllReq, _ := http.NewRequest("GET", "/api/v1/apis", nil)
 	router.ServeHTTP(getAllRes, getAllReq)
 
 	assert.Equal(t, 200, getAllRes.Code)
 }
 
 func TestGetByID(t *testing.T) {
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
-	mockUser.CreatedAt = time.Now()
-	mockUser.UpdatedAt = time.Now()
+	apiId, _ := uuid.NewRandom()
+
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "mockapi"
+	mockAPI.Description = "mock@mock.com"
+	mockAPI.CreatedAt = time.Now()
+	mockAPI.UpdatedAt = time.Now()
 
 	gin.SetMode(gin.TestMode)
 
-	mockUserUsecase := new(mocks.UserUsecase)
-	mockUserUsecase.On("GetByID", mockUser.ID).Return(mockUser, nil).Once()
+	mockAPIUsecase := new(mocks.APIUsecase)
+	mockAPIUsecase.On("GetByID", mockAPI.ID).Return(mockAPI, nil).Once()
 
 	router, rg := newMockRouter()
-	handler.NewUserHandler(rg, mockUserUsecase)
+	handler.NewAPIHandler(rg, mockAPIUsecase)
 
 	res := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/users/1", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/apis/"+apiId.String(), nil)
 	router.ServeHTTP(res, req)
 
 	assert.Equal(t, 200, res.Code)
 }
 
 func TestCreate(t *testing.T) {
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
+	apiId, _ := uuid.NewRandom()
+
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "mockapi"
+	mockAPI.Description = "mock@mock.com"
 
 	gin.SetMode(gin.TestMode)
 
-	mockUserUsecase := new(mocks.UserUsecase)
-	mockUserUsecase.On("Create", mockUser).Return(nil).Once()
+	mockAPIUsecase := new(mocks.APIUsecase)
+	mockAPIUsecase.On("Create", mockAPI).Return(nil).Once()
 
 	router, rg := newMockRouter()
-	handler.NewUserHandler(rg, mockUserUsecase)
+	handler.NewAPIHandler(rg, mockAPIUsecase)
 
-	user_json, _ := json.Marshal(mockUser)
+	api_json, _ := json.Marshal(mockAPI)
 	res := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/api/v1/users", bytes.NewReader(user_json))
+	req, _ := http.NewRequest("POST", "/api/v1/apis", bytes.NewReader(api_json))
 	router.ServeHTTP(res, req)
 
 	assert.Equal(t, 201, res.Code)
 }
 
 func TestUpdate(t *testing.T) {
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
+	apiId, _ := uuid.NewRandom()
+
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "mockapi"
+	mockAPI.Description = "mock@mock.com"
 
 	gin.SetMode(gin.TestMode)
 
-	mockUserUsecase := new(mocks.UserUsecase)
-	mockUserUsecase.On("Update", mockUser).Return(nil).Once()
+	mockAPIUsecase := new(mocks.APIUsecase)
+	mockAPIUsecase.On("Update", mockAPI).Return(nil).Once()
 
 	router, rg := newMockRouter()
-	handler.NewUserHandler(rg, mockUserUsecase)
+	handler.NewAPIHandler(rg, mockAPIUsecase)
 
-	user_json, _ := json.Marshal(mockUser)
+	api_json, _ := json.Marshal(mockAPI)
 	res := httptest.NewRecorder()
-	req, _ := http.NewRequest("PUT", "/api/v1/users", bytes.NewReader(user_json))
+	req, _ := http.NewRequest("PUT", "/api/v1/apis", bytes.NewReader(api_json))
 	router.ServeHTTP(res, req)
 
 	assert.Equal(t, 200, res.Code)
 }
 
 func TestDelete(t *testing.T) {
-	mockUser := domain.User{}
-	mockUser.ID = 1
-	mockUser.Name = "mockuser"
-	mockUser.Email = "mock@mock.com"
-	mockUser.CreatedAt = time.Now()
-	mockUser.UpdatedAt = time.Now()
+	apiId, _ := uuid.NewRandom()
+
+	mockAPI := domain.API{}
+	mockAPI.ID = apiId.String()
+	mockAPI.Name = "mockapi"
+	mockAPI.Description = "mock@mock.com"
+	mockAPI.CreatedAt = time.Now()
+	mockAPI.UpdatedAt = time.Now()
 
 	gin.SetMode(gin.TestMode)
 
-	mockUserUsecase := new(mocks.UserUsecase)
-	mockUserUsecase.On("Delete", mockUser.ID).Return(nil).Once()
+	mockAPIUsecase := new(mocks.APIUsecase)
+	mockAPIUsecase.On("Delete", mockAPI.ID).Return(nil).Once()
 
 	router, rg := newMockRouter()
-	handler.NewUserHandler(rg, mockUserUsecase)
+	handler.NewAPIHandler(rg, mockAPIUsecase)
 
 	res := httptest.NewRecorder()
-	req, _ := http.NewRequest("DELETE", "/api/v1/users/1", nil)
+	req, _ := http.NewRequest("DELETE", "/api/v1/apis/"+apiId.String(), nil)
 	router.ServeHTTP(res, req)
 
 	assert.Equal(t, 204, res.Code)
