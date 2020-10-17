@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: api-creator-backend
     ports:
-      - 3000:3000
+      - 4000:4000
     depends_on:
       mysql:
         condition: service_healthy
