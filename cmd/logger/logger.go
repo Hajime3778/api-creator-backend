@@ -23,6 +23,9 @@ func LoggingSetting() {
 		log.Fatalf("file=logFile err=%s", err.Error())
 	}
 
+	// ファイルで出力しているが本来Logはデータであるべき。
+	// 使用しているインフラによって、Log出力する必要あり。
+
 	// 標準出力とファイルの両方を出力先に設定する。
 	multiLogFile := io.MultiWriter(os.Stdout, logFile)
 	gin.DefaultWriter = io.MultiWriter(os.Stdout, logFile)

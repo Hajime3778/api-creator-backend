@@ -10,5 +10,5 @@ type CommonColumn struct {
 
 // CreatedResponse 作成時の返却値
 type CreatedResponse struct {
-	ID int `json:"id"`
+	ID string `json:"id"`
 }
