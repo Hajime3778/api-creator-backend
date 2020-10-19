@@ -19,6 +19,7 @@ func TestGetAll(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "name"
+	mockAPI.URL = "url"
 	mockAPI.Description = "test"
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
@@ -46,6 +47,7 @@ func TestGetByID(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "name"
+	mockAPI.URL = "url"
 	mockAPI.Description = "test"
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
@@ -71,6 +73,7 @@ func TestCreate(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "name"
+	mockAPI.URL = "url"
 	mockAPI.Description = "test"
 
 	mockAPIRepo := new(mocks.APIRepository)
@@ -93,6 +96,7 @@ func TestUpdate(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "name"
+	mockAPI.URL = "url"
 	mockAPI.Description = "test"
 
 	// モック
@@ -116,6 +120,7 @@ func TestDelete(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "name"
+	mockAPI.URL = "url"
 	mockAPI.Description = "test"
 	mockAPIRepo := new(mocks.APIRepository)
 

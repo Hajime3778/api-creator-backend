@@ -31,6 +31,7 @@ func TestGetAll(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "mockapi"
+	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
@@ -57,6 +58,7 @@ func TestGetByID(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "mockapi"
+	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
@@ -82,6 +84,7 @@ func TestCreate(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "mockapi"
+	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
 
 	gin.SetMode(gin.TestMode)
@@ -106,6 +109,7 @@ func TestUpdate(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "mockapi"
+	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
 
 	gin.SetMode(gin.TestMode)
@@ -130,6 +134,7 @@ func TestDelete(t *testing.T) {
 	mockAPI := domain.API{}
 	mockAPI.ID = apiId.String()
 	mockAPI.Name = "mockapi"
+	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
