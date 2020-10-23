@@ -19,6 +19,7 @@ CREATE TABLE `apis` (
   `name` varchar(40) NOT NULL DEFAULT '',
   `url` varchar(40) NOT NULL DEFAULT '',
   `description` varchar(200) NOT NULL DEFAULT '',
+  `model_id` varchar(36) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -26,10 +27,12 @@ CREATE TABLE `apis` (
 
 SET @users_api_id = UUID();
 SET @posts_api_id = UUID();
+SET @users_model_id = UUID();
+SET @posts_model_id = UUID();
 
-INSERT INTO `apis` (`id`, `name`, `url`, `description`) VALUES
-(@users_api_id, 'users', 'my-projects/api/users', 'ユーザーに関する操作をするAPIです'),
-(@posts_api_id, 'posts', 'my-project/api/posts', '投稿に関する操作をするAPIです');
+INSERT INTO `apis` (`id`, `name`, `url`, `description`, `model_id`) VALUES
+(@users_api_id, 'Users', 'my-projects/api/users', 'ユーザーに関する操作をするAPIです', @users_model_id),
+(@posts_api_id, 'Posts', 'my-project/api/posts', '投稿に関する操作をするAPIです', @posts_model_id);
 -- (UUID(), 'photos', 'my-project/api/photos', '写真に関する操作をするAPIです');
 
 DROP TABLE IF EXISTS `methods`;
@@ -63,17 +66,15 @@ SET @users_delete_id = UUID();
 -- SET @posts_delete_id = UUID();
 
 INSERT INTO `methods` (`id`, `api_id`, `type`, `url`, `description`, `request_parameter`, `request_model_id`, `response_model_id`, `is_array`) VALUES
-(@users_getall_id, @users_api_id, 'GET', '', 'すべてのユーザーを取得します。', '', '', '', true),
-(@users_getbyid_id, @users_api_id, 'GET', '/{user_id}', 'user_idから1件のユーザーを取得します。', 'user_id', '', '', false),
-(@users_create_id, @users_api_id, 'POST', '', 'ユーザーを1件作成します。', '', '', '', false),
-(@users_update_id, @users_api_id, 'PUT', '', 'ユーザーを1件更新します。', '', '', '', false),
+(@users_getall_id, @users_api_id, 'GET', '', 'すべてのユーザーを取得します。', '', '', @users_model_id, true),
+(@users_getbyid_id, @users_api_id, 'GET', '/{user_id}', 'user_idから1件のユーザーを取得します。', 'user_id', '', @users_model_id, false),
+(@users_create_id, @users_api_id, 'POST', '', 'ユーザーを1件作成します。', '', @users_model_id, '', false),
+(@users_update_id, @users_api_id, 'PUT', '', 'ユーザーを1件更新します。', '', @users_model_id, '', false),
 (@users_delete_id, @users_api_id, 'DELETE', '/{user_id}', 'ユーザーを1件削除します。', 'user_id', '', '', false);
 
 DROP TABLE IF EXISTS `models`;
 CREATE TABLE `models` (
   `id` varchar(36) NOT NULL,
-  `api_id` varchar(36) NOT NULL DEFAULT '',
-  `method_id` varchar(36) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `description` varchar(200) NOT NULL DEFAULT '',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
