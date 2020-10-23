@@ -59,18 +59,24 @@ SET @users_create_id = UUID();
 SET @users_update_id = UUID();
 SET @users_delete_id = UUID();
 
--- SET @posts_getall_id = UUID();
--- SET @posts_getbyid_id = UUID();
--- SET @posts_create_id = UUID();
--- SET @posts_update_id = UUID();
--- SET @posts_delete_id = UUID();
+SET @posts_getall_id = UUID();
+SET @posts_getbyid_id = UUID();
+SET @posts_create_id = UUID();
+SET @posts_update_id = UUID();
+SET @posts_delete_id = UUID();
 
 INSERT INTO `methods` (`id`, `api_id`, `type`, `url`, `description`, `request_parameter`, `request_model_id`, `response_model_id`, `is_array`) VALUES
 (@users_getall_id, @users_api_id, 'GET', '', 'すべてのユーザーを取得します。', '', '', @users_model_id, true),
 (@users_getbyid_id, @users_api_id, 'GET', '/{user_id}', 'user_idから1件のユーザーを取得します。', 'user_id', '', @users_model_id, false),
 (@users_create_id, @users_api_id, 'POST', '', 'ユーザーを1件作成します。', '', @users_model_id, '', false),
 (@users_update_id, @users_api_id, 'PUT', '', 'ユーザーを1件更新します。', '', @users_model_id, '', false),
-(@users_delete_id, @users_api_id, 'DELETE', '/{user_id}', 'ユーザーを1件削除します。', 'user_id', '', '', false);
+(@users_delete_id, @users_api_id, 'DELETE', '/{user_id}', 'ユーザーを1件削除します。', 'user_id', '', '', false),
+
+(@posts_getall_id, @posts_api_id, 'GET', '', 'すべての投稿を取得します。', '', '', @posts_model_id, true),
+(@posts_getbyid_id, @posts_api_id, 'GET', '/{post_id}', 'post_idから1件の投稿を取得します。', 'post_id', '', @posts_model_id, false),
+(@posts_create_id, @posts_api_id, 'POST', '', '投稿を1件作成します。', '', @posts_model_id, '', false),
+(@posts_update_id, @posts_api_id, 'PUT', '', '投稿を1件更新します。', '', @posts_model_id, '', false),
+(@posts_delete_id, @posts_api_id, 'DELETE', '/{post_id}', '投稿を1件削除します。', 'post_id', '', '', false)
 
 DROP TABLE IF EXISTS `models`;
 CREATE TABLE `models` (
@@ -81,6 +87,10 @@ CREATE TABLE `models` (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Models';
+
+INSERT INTO `models` (`id`, `name`, `description`) VALUES
+(@users_model_id, 'User', 'ユーザーを定義するモデルです。'),
+(@posts_model_id, 'Post', '投稿を定義するモデルです。')
 
 DROP TABLE IF EXISTS `columns`;
 CREATE TABLE `columns` (
