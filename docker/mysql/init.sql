@@ -31,7 +31,7 @@ SET @users_model_id = UUID();
 SET @posts_model_id = UUID();
 
 INSERT INTO `apis` (`id`, `name`, `url`, `description`, `model_id`) VALUES
-(@users_api_id, 'Users', 'my-projects/api/users', 'ユーザーに関する操作をするAPIです', @users_model_id),
+(@users_api_id, 'Users', 'my-project/api/users', 'ユーザーに関する操作をするAPIです', @users_model_id),
 (@posts_api_id, 'Posts', 'my-project/api/posts', '投稿に関する操作をするAPIです', @posts_model_id);
 -- (UUID(), 'photos', 'my-project/api/photos', '写真に関する操作をするAPIです');
 
