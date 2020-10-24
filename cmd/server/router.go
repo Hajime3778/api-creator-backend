@@ -4,6 +4,9 @@ import (
 	_apiHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/api/handler"
 	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/api/repository"
 	_apiUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/api/usecase"
+	_methodHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/method/handler"
+	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/method/repository"
+	_methodUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/method/usecase"
 	_userHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/user/handler"
 	_userRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/user/repository"
 	_userUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/user/usecase"
@@ -31,20 +34,20 @@ func (s *Server) SetUpRouter() *gin.Engine {
 	// Group v1
 	apiV1 := s.router.Group("api/v1")
 
-	s.apiRoutes(apiV1)
-	s.userRoutes(apiV1)
+	// Users
+	userRepository := _userRepository.NewUserRepository(s.db)
+	userUsecase := _userUsecase.NewUserUsecase(userRepository)
+	_userHandler.NewUserHandler(apiV1, userUsecase)
+
+	// APIs
+	apiRepository := _apiRepository.NewAPIRepository(s.db)
+	apiUsecase := _apiUsecase.NewAPIUsecase(apiRepository)
+	_apiHandler.NewAPIHandler(apiV1, apiUsecase)
+
+	// Methods
+	methodRepository := _methodRepository.NewMethodRepository(s.db)
+	methodUsecase := _methodUsecase.NewMethodUsecase(methodRepository)
+	_methodHandler.NewMethodHandler(apiV1, methodUsecase)
 
 	return s.router
-}
-
-func (s *Server) userRoutes(api *gin.RouterGroup) {
-	repository := _userRepository.NewUserRepository(s.db)
-	usecase := _userUsecase.NewUserUsecase(repository)
-	_userHandler.NewUserHandler(api, usecase)
-}
-
-func (s *Server) apiRoutes(api *gin.RouterGroup) {
-	repository := _apiRepository.NewAPIRepository(s.db)
-	usecase := _apiUsecase.NewAPIUsecase(repository)
-	_apiHandler.NewAPIHandler(api, usecase)
 }

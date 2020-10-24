@@ -32,10 +32,10 @@ func TestGetAll(t *testing.T) {
 		mockAPIRepo.On("GetAll").Return(mockAPIs, nil).Once()
 		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		users, err := usecase.GetAll()
+		apis, err := usecase.GetAll()
 
 		assert.NoError(t, err)
-		assert.NotNil(t, users)
+		assert.NotNil(t, apis)
 
 		mockAPIRepo.AssertExpectations(t)
 	})
@@ -58,10 +58,10 @@ func TestGetByID(t *testing.T) {
 		mockAPIRepo.On("GetByID", mockAPI.ID).Return(mockAPI, nil).Once()
 		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		user, err := usecase.GetByID(mockAPI.ID)
+		api, err := usecase.GetByID(mockAPI.ID)
 
 		assert.NoError(t, err)
-		assert.NotNil(t, user)
+		assert.NotNil(t, api)
 
 		mockAPIRepo.AssertExpectations(t)
 	})
