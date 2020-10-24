@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Hajime3778/api-creator-backend/pkg/apis/user/usecase"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
-	"github.com/Hajime3778/api-creator-backend/pkg/user/usecase"
 	"github.com/Hajime3778/api-creator-backend/test/mocks"
 
 	"github.com/stretchr/testify/assert"

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Hajime3778/api-creator-backend/pkg/api/handler"
+	"github.com/Hajime3778/api-creator-backend/pkg/apis/api/handler"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/Hajime3778/api-creator-backend/test/mocks"
 	"github.com/google/uuid"

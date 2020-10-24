@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Hajime3778/api-creator-backend/pkg/apis/user/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
-	"github.com/Hajime3778/api-creator-backend/pkg/user/repository"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"

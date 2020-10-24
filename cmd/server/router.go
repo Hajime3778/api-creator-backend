@@ -1,12 +1,12 @@
 package server
 
 import (
-	_apiHandler "github.com/Hajime3778/api-creator-backend/pkg/api/handler"
-	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/api/repository"
-	_apiUsecase "github.com/Hajime3778/api-creator-backend/pkg/api/usecase"
-	_userHandler "github.com/Hajime3778/api-creator-backend/pkg/user/handler"
-	_userRepository "github.com/Hajime3778/api-creator-backend/pkg/user/repository"
-	_userUsecase "github.com/Hajime3778/api-creator-backend/pkg/user/usecase"
+	_apiHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/api/handler"
+	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/api/repository"
+	_apiUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/api/usecase"
+	_userHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/user/handler"
+	_userRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/user/repository"
+	_userUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/user/usecase"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

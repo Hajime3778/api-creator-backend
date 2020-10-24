@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Hajime3778/api-creator-backend/pkg/api/repository"
+	"github.com/Hajime3778/api-creator-backend/pkg/apis/api/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 	"github.com/google/uuid"

@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"github.com/Hajime3778/api-creator-backend/pkg/api/repository"
+	"github.com/Hajime3778/api-creator-backend/pkg/apis/api/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 )
 
