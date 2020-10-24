@@ -33,8 +33,8 @@ func TestGetAll(t *testing.T) {
 	mock, db := setUpMockDB()
 
 	query := regexp.QuoteMeta("SELECT * FROM `apis`")
-	rows := sqlmock.NewRows([]string{"id", "name", "url", "description", "created_at", "updated_at"}).
-		AddRow(apiId.String(), "name", "url", "description", time.Now(), time.Now())
+	rows := sqlmock.NewRows([]string{"id", "name", "url", "description", "model_id", "created_at", "updated_at"}).
+		AddRow(apiId.String(), "name", "url", "description", "", time.Now(), time.Now())
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
 	apiRepository := repository.NewAPIRepository(db)
@@ -49,8 +49,8 @@ func TestGetByID(t *testing.T) {
 	apiId, _ := uuid.NewRandom()
 
 	query := regexp.QuoteMeta("SELECT * FROM `apis` WHERE (id = ?) ORDER BY `apis`.`id` ASC LIMIT 1")
-	rows := sqlmock.NewRows([]string{"id", "name", "url", "description", "created_at", "updated_at"}).
-		AddRow(apiId.String(), "name", "url", "description", time.Now(), time.Now())
+	rows := sqlmock.NewRows([]string{"id", "name", "url", "description", "model_id", "created_at", "updated_at"}).
+		AddRow(apiId.String(), "name", "url", "description", "", time.Now(), time.Now())
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
 	apiRepository := repository.NewAPIRepository(db)
@@ -72,7 +72,7 @@ func TestCreate(t *testing.T) {
 	mockAPI.UpdatedAt = time.Time{}
 
 	mock.ExpectBegin()
-	query := regexp.QuoteMeta("INSERT INTO `apis` (`id`,`name`,`url`,`description`,`created_at`,`updated_at`) VALUES (?,?,?,?,?,?)")
+	query := regexp.QuoteMeta("INSERT INTO `apis` (`id`,`name`,`url`,`description`,`model_id`,`created_at`,`updated_at`) VALUES (?,?,?,?,?,?,?)")
 	mock.ExpectExec(query).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
@@ -93,12 +93,12 @@ func TestUpdate(t *testing.T) {
 	mockAPI.Description = "test"
 
 	selectQuery := regexp.QuoteMeta("SELECT * FROM `apis` WHERE (id = ?) ORDER BY `apis`.`id` ASC LIMIT 1")
-	selectRows := sqlmock.NewRows([]string{"id", "name", "url", "description", "created_at", "updated_at"}).
-		AddRow(apiId.String(), "name", "url", "description", mockAPI.CreatedAt, mockAPI.UpdatedAt)
+	selectRows := sqlmock.NewRows([]string{"id", "name", "url", "description", `model_id`, "created_at", "updated_at"}).
+		AddRow(apiId.String(), "name", "url", "description", "", mockAPI.CreatedAt, mockAPI.UpdatedAt)
 	mock.ExpectQuery(selectQuery).WillReturnRows(selectRows)
 
 	mock.ExpectBegin()
-	query := regexp.QuoteMeta("UPDATE `apis` SET `name` = ?, `url` = ?, `description` = ?, `updated_at` = ? WHERE `apis`.`id` = ?")
+	query := regexp.QuoteMeta("UPDATE `apis` SET `name` = ?, `url` = ?, `description` = ?, `model_id` = ?, `updated_at` = ? WHERE `apis`.`id` = ?")
 	mock.ExpectExec(query).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
