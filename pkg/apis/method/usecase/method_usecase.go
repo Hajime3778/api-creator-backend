@@ -9,6 +9,7 @@ import (
 type MethodUsecase interface {
 	GetAll() ([]domain.Method, error)
 	GetByID(id string) (domain.Method, error)
+	GetListByAPIID(apiID string) ([]domain.Method, error)
 	Create(method domain.Method) (string, error)
 	Update(method domain.Method) error
 	Delete(id string) error
@@ -33,6 +34,11 @@ func (u *methodUsecase) GetAll() ([]domain.Method, error) {
 // GetByID 1件のMethodを取得します
 func (u *methodUsecase) GetByID(id string) (domain.Method, error) {
 	return u.repo.GetByID(id)
+}
+
+// GetListByAPIID MethodをAPIIDで複数取得します
+func (u *methodUsecase) GetListByAPIID(apiID string) ([]domain.Method, error) {
+	return u.repo.GetListByAPIID(apiID)
 }
 
 // Create Methodを作成します

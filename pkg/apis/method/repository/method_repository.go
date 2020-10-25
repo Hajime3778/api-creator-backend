@@ -11,6 +11,7 @@ import (
 type MethodRepository interface {
 	GetAll() ([]domain.Method, error)
 	GetByID(id string) (domain.Method, error)
+	GetListByAPIID(apiID string) ([]domain.Method, error)
 	Create(method domain.Method) (string, error)
 	Update(method domain.Method) error
 	Delete(id string) error
@@ -41,6 +42,14 @@ func (r *methodRepository) GetByID(id string) (domain.Method, error) {
 	err := r.db.Where("id = ?", id).First(&method).Error
 
 	return method, err
+}
+
+// GetListByAPIID MethodをAPIIDで複数取得します
+func (r *methodRepository) GetListByAPIID(apiID string) ([]domain.Method, error) {
+	methods := []domain.Method{}
+	err := r.db.Where("api_id = ?", apiID).Find(&methods).Error
+
+	return methods, err
 }
 
 // Create Methodを追加します

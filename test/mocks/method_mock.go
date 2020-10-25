@@ -23,6 +23,12 @@ func (_m *MethodUsecase) GetByID(id string) (domain.Method, error) {
 	return ret.Get(0).(domain.Method), ret.Error(1)
 }
 
+// GetListByAPIID is mock function
+func (_m *MethodUsecase) GetListByAPIID(apiID string) ([]domain.Method, error) {
+	ret := _m.Called()
+	return ret.Get(0).([]domain.Method), ret.Error(1)
+}
+
 // Create is mock function
 func (_m *MethodUsecase) Create(method domain.Method) (string, error) {
 	ret := _m.Called(method)
