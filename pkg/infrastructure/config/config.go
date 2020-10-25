@@ -21,7 +21,7 @@ type Config struct {
 	}
 }
 
-// NewConfig 設定ファイルを読み込みCondigを作成します。
+// NewConfig 設定ファイルを読み込みCondigを作成します
 func NewConfig() *Config {
 
 	viper.SetConfigFile("config.json")

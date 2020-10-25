@@ -19,7 +19,7 @@ type DB struct {
 	Connection *gorm.DB
 }
 
-// NewDB DataBase create
+// NewDB Configから、DBオブジェクトを作成します
 func NewDB(c *config.Config) *DB {
 	return newDB(&DB{
 		Host:     c.DataBase.Host,
@@ -31,6 +31,7 @@ func NewDB(c *config.Config) *DB {
 }
 
 func newDB(d *DB) *DB {
+	// MySQLの接続情報を作成
 	connectionInfo := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 		d.Username,
 		d.Password,
@@ -45,6 +46,7 @@ func newDB(d *DB) *DB {
 
 	connection := fmt.Sprintf("%s?%s", connectionInfo, option.Encode())
 
+	// MySQLに接続
 	db, err := gorm.Open("mysql", connection)
 	if err != nil {
 		panic(err.Error())

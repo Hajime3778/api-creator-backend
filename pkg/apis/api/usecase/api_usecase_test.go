@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Hajime3778/api-creator-backend/pkg/api/usecase"
+	"github.com/Hajime3778/api-creator-backend/pkg/apis/api/usecase"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/Hajime3778/api-creator-backend/test/mocks"
 	"github.com/google/uuid"
@@ -32,10 +32,10 @@ func TestGetAll(t *testing.T) {
 		mockAPIRepo.On("GetAll").Return(mockAPIs, nil).Once()
 		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		users, err := usecase.GetAll()
+		apis, err := usecase.GetAll()
 
 		assert.NoError(t, err)
-		assert.NotNil(t, users)
+		assert.NotNil(t, apis)
 
 		mockAPIRepo.AssertExpectations(t)
 	})
@@ -49,6 +49,7 @@ func TestGetByID(t *testing.T) {
 	mockAPI.Name = "name"
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
+	mockAPI.ModelID = ""
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
 
@@ -58,10 +59,10 @@ func TestGetByID(t *testing.T) {
 		mockAPIRepo.On("GetByID", mockAPI.ID).Return(mockAPI, nil).Once()
 		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		user, err := usecase.GetByID(mockAPI.ID)
+		api, err := usecase.GetByID(mockAPI.ID)
 
 		assert.NoError(t, err)
-		assert.NotNil(t, user)
+		assert.NotNil(t, api)
 
 		mockAPIRepo.AssertExpectations(t)
 	})
@@ -75,6 +76,7 @@ func TestCreate(t *testing.T) {
 	mockAPI.Name = "name"
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
+	mockAPI.ModelID = ""
 
 	mockAPIRepo := new(mocks.APIRepository)
 
@@ -98,6 +100,7 @@ func TestUpdate(t *testing.T) {
 	mockAPI.Name = "name"
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
+	mockAPI.ModelID = ""
 
 	// モック
 	mockAPIRepo := new(mocks.APIRepository)
@@ -122,6 +125,7 @@ func TestDelete(t *testing.T) {
 	mockAPI.Name = "name"
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
+	mockAPI.ModelID = ""
 	mockAPIRepo := new(mocks.APIRepository)
 
 	t.Run("test1", func(t *testing.T) {

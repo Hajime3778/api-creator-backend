@@ -10,14 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Server server
+// Server サーバーの情報を定義します。
 type Server struct {
 	db     *database.DB
 	router *gin.Engine
 	server *http.Server
 }
 
-// NewServer Server create
+// NewServer Serverを初期化します
 func NewServer(c *config.Config, db *database.DB) *Server {
 	r := newRouter()
 	s := newServer(c, r)
@@ -38,7 +38,7 @@ func newServer(c *config.Config, router *gin.Engine) *http.Server {
 	return s
 }
 
-// Run Run server
+// Run サーバーを実行します
 func (s *Server) Run() {
 	s.server.ListenAndServe()
 }

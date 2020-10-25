@@ -4,19 +4,19 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Hajime3778/api-creator-backend/pkg/api/usecase"
+	"github.com/Hajime3778/api-creator-backend/pkg/apis/api/usecase"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
-// APIHandler handler for api request
+// APIHandler APIに対するリクエストハンドラ
 type APIHandler struct {
 	usecase usecase.APIUsecase
 }
 
-// NewAPIHandler is init for APIHandler
+// NewAPIHandler APIHandlerを作成します
 func NewAPIHandler(r *gin.RouterGroup, u usecase.APIUsecase) {
 	handler := &APIHandler{
 		usecase: u,
@@ -48,7 +48,7 @@ func (h *APIHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// GetByID 1件のAPIを取得します
+// GetByID APIを1件取得します
 func (h *APIHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
 
