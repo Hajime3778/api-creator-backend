@@ -5,7 +5,7 @@ import (
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 )
 
-// MethodUsecase usecase
+// MethodUsecase Interface
 type MethodUsecase interface {
 	GetAll() ([]domain.Method, error)
 	GetByID(id string) (domain.Method, error)
@@ -14,12 +14,11 @@ type MethodUsecase interface {
 	Delete(id string) error
 }
 
-// methodUsecase usecase
 type methodUsecase struct {
 	repo repository.MethodRepository
 }
 
-// NewMethodUsecase is init for MethodUsecase
+// NewMethodUsecase MethodUsecaseインターフェイスを表すオブジェクトを作成します
 func NewMethodUsecase(repo repository.MethodRepository) MethodUsecase {
 	return &methodUsecase{
 		repo: repo,

@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// MethodRepository repository
+// MethodRepository Interface
 type MethodRepository interface {
 	GetAll() ([]domain.Method, error)
 	GetByID(id string) (domain.Method, error)
@@ -20,14 +20,14 @@ type methodRepository struct {
 	db *gorm.DB
 }
 
-// NewMethodRepository is init for MethodController
+// NewMethodRepository MethodRepositoryインターフェイスを表すオブジェクトを作成します
 func NewMethodRepository(db *database.DB) MethodRepository {
 	return &methodRepository{
 		db: db.Connection,
 	}
 }
 
-// GetAll Get all methodsdata
+// GetAll すべてのMethodを取得します
 func (r *methodRepository) GetAll() ([]domain.Method, error) {
 	methods := []domain.Method{}
 	err := r.db.Find(&methods).Error
@@ -35,7 +35,7 @@ func (r *methodRepository) GetAll() ([]domain.Method, error) {
 	return methods, err
 }
 
-// GetByID Get single methodsdata
+// GetByID Methodを1件取得します
 func (r *methodRepository) GetByID(id string) (domain.Method, error) {
 	method := domain.Method{}
 	err := r.db.Where("id = ?", id).First(&method).Error
@@ -43,14 +43,14 @@ func (r *methodRepository) GetByID(id string) (domain.Method, error) {
 	return method, err
 }
 
-// Create Add method
+// Create Methodを追加します
 func (r *methodRepository) Create(method domain.Method) (string, error) {
 	err := r.db.Create(&method).Error
 	id := method.ID
 	return id, err
 }
 
-// Update Update method
+// Update Methodを更新します
 func (r *methodRepository) Update(method domain.Method) error {
 	targetMethod := domain.Method{}
 
@@ -62,7 +62,7 @@ func (r *methodRepository) Update(method domain.Method) error {
 	return r.db.Save(&method).Error
 }
 
-// Delete Delete methoddata
+// Delete Methodを削除します
 func (r *methodRepository) Delete(id string) error {
 	method := domain.Method{}
 

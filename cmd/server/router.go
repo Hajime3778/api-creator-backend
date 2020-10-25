@@ -29,7 +29,7 @@ func newRouter() *gin.Engine {
 	return router
 }
 
-// SetUpRouter Setup all api routing
+// SetUpRouter ルーティングを設定します。
 func (s *Server) SetUpRouter() *gin.Engine {
 	// Group v1
 	apiV1 := s.router.Group("api/v1")

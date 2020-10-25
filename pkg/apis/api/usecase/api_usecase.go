@@ -5,7 +5,7 @@ import (
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 )
 
-// APIUsecase usecase
+// APIUsecase Interface
 type APIUsecase interface {
 	GetAll() ([]domain.API, error)
 	GetByID(id string) (domain.API, error)
@@ -14,12 +14,11 @@ type APIUsecase interface {
 	Delete(id string) error
 }
 
-// apiUsecase usecase
 type apiUsecase struct {
 	repo repository.APIRepository
 }
 
-// NewAPIUsecase is init for APIUsecase
+// NewAPIUsecase APIUsecaseインターフェイスを表すオブジェクトを作成します
 func NewAPIUsecase(repo repository.APIRepository) APIUsecase {
 	return &apiUsecase{
 		repo: repo,
@@ -31,7 +30,7 @@ func (u *apiUsecase) GetAll() ([]domain.API, error) {
 	return u.repo.GetAll()
 }
 
-// GetByID 1件のAPIを取得します
+// GetByID APIを1件取得します
 func (u *apiUsecase) GetByID(id string) (domain.API, error) {
 	return u.repo.GetByID(id)
 }
@@ -41,7 +40,7 @@ func (u *apiUsecase) Create(api domain.API) (string, error) {
 	return u.repo.Create(api)
 }
 
-// Update APIを更新します。
+// Update APIを更新します
 func (u *apiUsecase) Update(api domain.API) error {
 	return u.repo.Update(api)
 }

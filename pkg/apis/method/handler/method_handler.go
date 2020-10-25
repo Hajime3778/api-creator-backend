@@ -11,12 +11,12 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// MethodHandler handler for method request
+// MethodHandler MethodAPIに対するリクエストハンドラ
 type MethodHandler struct {
 	usecase usecase.MethodUsecase
 }
 
-// NewMethodHandler is init for MethodHandler
+// NewMethodHandler MethodHandlerを作成します
 func NewMethodHandler(r *gin.RouterGroup, u usecase.MethodUsecase) {
 	handler := &MethodHandler{
 		usecase: u,
@@ -48,7 +48,7 @@ func (h *MethodHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// GetByID 1件のMethodを取得します
+// GetByID Methodを1件取得します
 func (h *MethodHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
 
@@ -81,7 +81,7 @@ func (h *MethodHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, domain.CreatedResponse{ID: id})
 }
 
-// Update Methodを更新します。
+// Update Methodを更新します
 func (h *MethodHandler) Update(c *gin.Context) {
 	var method domain.Method
 	c.BindJSON(&method)

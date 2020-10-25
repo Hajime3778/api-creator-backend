@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// APIRepository repository
+// APIRepository Interface
 type APIRepository interface {
 	GetAll() ([]domain.API, error)
 	GetByID(id string) (domain.API, error)
@@ -20,14 +20,14 @@ type apiRepository struct {
 	db *gorm.DB
 }
 
-// NewAPIRepository is init for APIController
+// NewAPIRepository APIRepositoryインターフェイスを表すオブジェクトを作成します
 func NewAPIRepository(db *database.DB) APIRepository {
 	return &apiRepository{
 		db: db.Connection,
 	}
 }
 
-// GetAll Get all apisdata
+// GetAll すべてのAPIを取得します
 func (r *apiRepository) GetAll() ([]domain.API, error) {
 	apis := []domain.API{}
 	err := r.db.Find(&apis).Error
@@ -35,7 +35,7 @@ func (r *apiRepository) GetAll() ([]domain.API, error) {
 	return apis, err
 }
 
-// GetByID Get single apisdata
+// GetByID APIを1件取得します
 func (r *apiRepository) GetByID(id string) (domain.API, error) {
 	api := domain.API{}
 	err := r.db.Where("id = ?", id).First(&api).Error
@@ -43,14 +43,14 @@ func (r *apiRepository) GetByID(id string) (domain.API, error) {
 	return api, err
 }
 
-// Create Add api
+// Create APIを作成します
 func (r *apiRepository) Create(api domain.API) (string, error) {
 	err := r.db.Create(&api).Error
 	id := api.ID
 	return id, err
 }
 
-// Update Update api
+// Update APIを更新します
 func (r *apiRepository) Update(api domain.API) error {
 	targetAPI := domain.API{}
 
@@ -62,7 +62,7 @@ func (r *apiRepository) Update(api domain.API) error {
 	return r.db.Save(&api).Error
 }
 
-// Delete Delete apidata
+// Delete APIを削除します
 func (r *apiRepository) Delete(id string) error {
 	api := domain.API{}
 
