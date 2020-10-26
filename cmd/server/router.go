@@ -7,6 +7,9 @@ import (
 	_methodHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/method/handler"
 	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/method/repository"
 	_methodUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/method/usecase"
+	_modelHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/model/handler"
+	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/model/repository"
+	_modelUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/model/usecase"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -40,6 +43,11 @@ func (s *Server) SetUpRouter() *gin.Engine {
 	methodRepository := _methodRepository.NewMethodRepository(s.db)
 	methodUsecase := _methodUsecase.NewMethodUsecase(methodRepository)
 	_methodHandler.NewMethodHandler(apiV1, methodUsecase)
+
+	// Models
+	modelRepository := _modelRepository.NewModelRepository(s.db)
+	modelUsecase := _modelUsecase.NewModelUsecase(modelRepository)
+	_modelHandler.NewModelHandler(apiV1, modelUsecase)
 
 	return s.router
 }
