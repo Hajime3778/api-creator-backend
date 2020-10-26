@@ -30,8 +30,8 @@ func TestGetAll(t *testing.T) {
 	mockModels := make([]domain.Model, 0)
 	mockModel := domain.Model{}
 	mockModel.ID = modelId.String()
-	mockModel.Name = "test"
-	mockModel.Description = "test"
+	mockModel.Name = "name"
+	mockModel.Description = "description"
 	mockModel.CreatedAt = time.Now()
 	mockModel.UpdatedAt = time.Now()
 	mockModels = append(mockModels, mockModel)
@@ -56,8 +56,8 @@ func TestGetByID(t *testing.T) {
 
 	mockModel := domain.Model{}
 	mockModel.ID = modelId.String()
-	mockModel.Name = "test"
-	mockModel.Description = "test"
+	mockModel.Name = "name"
+	mockModel.Description = "description"
 	mockModel.CreatedAt = time.Now()
 	mockModel.UpdatedAt = time.Now()
 
@@ -81,8 +81,8 @@ func TestCreate(t *testing.T) {
 
 	mockModel := domain.Model{}
 	mockModel.ID = modelId.String()
-	mockModel.Name = "test"
-	mockModel.Description = "test"
+	mockModel.Name = "name"
+	mockModel.Description = "description"
 
 	gin.SetMode(gin.TestMode)
 
@@ -105,8 +105,8 @@ func TestUpdate(t *testing.T) {
 
 	mockModel := domain.Model{}
 	mockModel.ID = modelId.String()
-	mockModel.Name = "test"
-	mockModel.Description = "test"
+	mockModel.Name = "name"
+	mockModel.Description = "description"
 
 	gin.SetMode(gin.TestMode)
 
@@ -129,8 +129,8 @@ func TestDelete(t *testing.T) {
 
 	mockModel := domain.Model{}
 	mockModel.ID = modelId.String()
-	mockModel.Name = "test"
-	mockModel.Description = "test"
+	mockModel.Name = "name"
+	mockModel.Description = "description"
 
 	gin.SetMode(gin.TestMode)
 

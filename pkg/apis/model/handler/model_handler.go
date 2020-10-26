@@ -29,8 +29,6 @@ func NewModelHandler(r *gin.RouterGroup, u usecase.ModelUsecase) {
 		modelRoutes.PUT("", handler.Update)
 		modelRoutes.DELETE("/:id", handler.Delete)
 	}
-	// apiに紐づいたmodelのルート(ルーティングまとめる箇所の検討余地あり)
-	r.GET("/apis/:id/models", handler.GetListByAPIID)
 }
 
 // GetAll 複数のModelを取得します
@@ -55,25 +53,6 @@ func (h *ModelHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
 
 	result, err := h.usecase.GetByID(id)
-
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, err.Error())
-		} else {
-			c.JSON(http.StatusInternalServerError, err.Error())
-		}
-		log.Println(err)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
-}
-
-// GetListByAPIID ModelをAPIIDで複数取得します
-func (h *ModelHandler) GetListByAPIID(c *gin.Context) {
-	apiID := c.Param("id")
-
-	result, err := h.usecase.GetListByAPIID(apiID)
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {

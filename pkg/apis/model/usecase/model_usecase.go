@@ -9,7 +9,6 @@ import (
 type ModelUsecase interface {
 	GetAll() ([]domain.Model, error)
 	GetByID(id string) (domain.Model, error)
-	GetListByAPIID(apiID string) ([]domain.Model, error)
 	Create(model domain.Model) (string, error)
 	Update(model domain.Model) error
 	Delete(id string) error
@@ -34,11 +33,6 @@ func (u *modelUsecase) GetAll() ([]domain.Model, error) {
 // GetByID 1件のModelを取得します
 func (u *modelUsecase) GetByID(id string) (domain.Model, error) {
 	return u.repo.GetByID(id)
-}
-
-// GetListByAPIID ModelをAPIIDで複数取得します
-func (u *modelUsecase) GetListByAPIID(apiID string) ([]domain.Model, error) {
-	return u.repo.GetListByAPIID(apiID)
 }
 
 // Create Modelを作成します

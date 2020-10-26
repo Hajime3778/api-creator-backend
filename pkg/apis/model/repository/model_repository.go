@@ -11,7 +11,6 @@ import (
 type ModelRepository interface {
 	GetAll() ([]domain.Model, error)
 	GetByID(id string) (domain.Model, error)
-	GetListByAPIID(apiID string) ([]domain.Model, error)
 	Create(model domain.Model) (string, error)
 	Update(model domain.Model) error
 	Delete(id string) error
@@ -42,14 +41,6 @@ func (r *modelRepository) GetByID(id string) (domain.Model, error) {
 	err := r.db.Where("id = ?", id).First(&model).Error
 
 	return model, err
-}
-
-// GetListByAPIID ModelをAPIIDで複数取得します
-func (r *modelRepository) GetListByAPIID(apiID string) ([]domain.Model, error) {
-	models := []domain.Model{}
-	err := r.db.Where("api_id = ?", apiID).Find(&models).Error
-
-	return models, err
 }
 
 // Create Modelを追加します
