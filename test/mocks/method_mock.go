@@ -64,6 +64,12 @@ func (_m *MethodRepository) GetByID(id string) (domain.Method, error) {
 	return ret.Get(0).(domain.Method), ret.Error(1)
 }
 
+// GetListByAPIID is mock function
+func (_m *MethodRepository) GetListByAPIID(apiID string) ([]domain.Method, error) {
+	ret := _m.Called()
+	return ret.Get(0).([]domain.Method), ret.Error(1)
+}
+
 // Create is mock function
 func (_m *MethodRepository) Create(method domain.Method) (string, error) {
 	ret := _m.Called(method)
