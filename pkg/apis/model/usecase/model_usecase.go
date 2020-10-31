@@ -3,6 +3,7 @@ package usecase
 import (
 	"github.com/Hajime3778/api-creator-backend/pkg/apis/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/google/uuid"
 )
 
 // ModelUsecase Interface
@@ -37,6 +38,10 @@ func (u *modelUsecase) GetByID(id string) (domain.Model, error) {
 
 // Create Modelを作成します
 func (u *modelUsecase) Create(model domain.Model) (string, error) {
+	if model.ID == "" {
+		id, _ := uuid.NewRandom()
+		model.ID = id.String()
+	}
 	return u.repo.Create(model)
 }
 
