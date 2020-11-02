@@ -80,13 +80,13 @@ CREATE TABLE `models` (
   `id` varchar(36) NOT NULL,
   `name` varchar(40) NOT NULL DEFAULT '',
   `description` varchar(200) NOT NULL DEFAULT '',
-  `scheme` varchar(512) NOT NULL DEFAULT '',
+  `schema` varchar(512) NOT NULL DEFAULT '',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Models';
 
-INSERT INTO `models` (`id`, `name`, `description`, `scheme`) VALUES
+INSERT INTO `models` (`id`, `name`, `description`, `schema`) VALUES
 (@users_model_id, 'User', 'ユーザーを定義するモデルです。', ''),
 (@posts_model_id, 'Post', '投稿を定義するモデルです。', ''),
 (@photos_model_id, 'Post', '写真を定義するモデルです。', '');

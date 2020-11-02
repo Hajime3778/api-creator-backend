@@ -42,13 +42,13 @@ func (u *modelUsecase) Create(model domain.Model) (string, error) {
 		id, _ := uuid.NewRandom()
 		model.ID = id.String()
 	}
-	// TODO: JsonSchemeが正しい形式か検証する処理
+	// TODO: JsonSchemaが正しい形式か検証する処理
 	return u.repo.Create(model)
 }
 
 // Update Modelを更新します。
 func (u *modelUsecase) Update(model domain.Model) error {
-	// TODO: JsonSchemeが正しい形式か検証する処理
+	// TODO: JsonSchemaが正しい形式か検証する処理
 	return u.repo.Update(model)
 }
 

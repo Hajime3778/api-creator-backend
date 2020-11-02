@@ -20,7 +20,7 @@ func TestGetAll(t *testing.T) {
 	mockModel.ID = modelId.String()
 	mockModel.Name = "name"
 	mockModel.Description = "description"
-	mockModel.Scheme = "scheme"
+	mockModel.Schema = "schema"
 	mockModels = append(mockModels, mockModel)
 
 	// モック
@@ -46,7 +46,7 @@ func TestGetByID(t *testing.T) {
 	mockModel.ID = modelId.String()
 	mockModel.Name = "name"
 	mockModel.Description = "description"
-	mockModel.Scheme = "scheme"
+	mockModel.Schema = "schema"
 	mockModel.CreatedAt = time.Now()
 	mockModel.UpdatedAt = time.Now()
 
@@ -72,7 +72,7 @@ func TestCreate(t *testing.T) {
 	mockModel.ID = modelId.String()
 	mockModel.Name = "name"
 	mockModel.Description = "description"
-	mockModel.Scheme = "scheme"
+	mockModel.Schema = "schema"
 
 	mockModelRepo := new(mocks.ModelRepository)
 
@@ -95,7 +95,7 @@ func TestUpdate(t *testing.T) {
 	mockModel.ID = modelId.String()
 	mockModel.Name = "name"
 	mockModel.Description = "description"
-	mockModel.Scheme = "scheme"
+	mockModel.Schema = "schema"
 
 	mockModelRepo := new(mocks.ModelRepository)
 
@@ -118,7 +118,7 @@ func TestDelete(t *testing.T) {
 	mockModel.ID = modelId.String()
 	mockModel.Name = "name"
 	mockModel.Description = "description"
-	mockModel.Scheme = "scheme"
+	mockModel.Schema = "schema"
 
 	mockModelRepo := new(mocks.ModelRepository)
 
