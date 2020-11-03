@@ -4,7 +4,6 @@ CREATE TABLE `apis` (
   `name` varchar(64) NOT NULL DEFAULT '',
   `url` varchar(64) NOT NULL DEFAULT '',
   `description` varchar(255) NOT NULL DEFAULT '',
-  `model_id` varchar(36) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -13,14 +12,11 @@ CREATE TABLE `apis` (
 SET @users_api_id = UUID();
 SET @posts_api_id = UUID();
 SET @photos_api_id = UUID();
-SET @users_model_id = UUID();
-SET @posts_model_id = UUID();
-SET @photos_model_id = UUID();
 
-INSERT INTO `apis` (`id`, `name`, `url`, `description`, `model_id`) VALUES
-(@users_api_id, 'Users', 'my-project/api/users', 'ユーザーに関する操作をするAPIです', @users_model_id),
-(@posts_api_id, 'Posts', 'my-project/api/posts', '投稿に関する操作をするAPIです', @posts_model_id),
-(@photos_api_id, 'Photos', 'my-project/api/photos', '写真に関する操作をするAPIです', @photos_model_id);
+INSERT INTO `apis` (`id`, `name`, `url`, `description`) VALUES
+(@users_api_id, 'Users', 'my-project/api/users', 'ユーザーに関する操作をするAPIです'),
+(@posts_api_id, 'Posts', 'my-project/api/posts', '投稿に関する操作をするAPIです'),
+(@photos_api_id, 'Photos', 'my-project/api/photos', '写真に関する操作をするAPIです');
 
 DROP TABLE IF EXISTS `methods`;
 CREATE TABLE `methods` (
@@ -86,9 +82,13 @@ CREATE TABLE `models` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Models';
 
-INSERT INTO `models` (`id`, `name`, `description`, `schema`) VALUES
-(@users_model_id, 'User', 'ユーザーを定義するモデルです。', '{\n    "type": "object",\n    "properties": {\n        "id": {\n            "type": "string",\n            "description": "ID"\n        },\n        "name": {\n            "type": "string",\n            "description": "名前"\n        },\n        "email": {\n            "type": "string",\n            "description": "メールアドレス"\n        },\n        "description": {\n            "type": "string",\n            "description": "説明"\n        }\n    }\n}'),
+SET @users_model_id = UUID();
+SET @posts_model_id = UUID();
+SET @photos_model_id = UUID();
 
-(@posts_model_id, 'Post', '投稿を定義するモデルです。', '{\n    "type": "object",\n    "properties": {\n        "id": {\n            "type": "string",\n            "description": "ID"\n        },\n        "name": {\n            "type": "string",\n            "description": "投稿名"\n        },\n       "body": {\n            "type": "string",\n            "description": "投稿内容"\n        },\n        "postedDate": {\n            "type": "string",\n            "description": "投稿日"\n        },\n        "postedUserId": {\n            "type": "string",\n            "description": "投稿者ID"\n        }\n    }\n}'),
+INSERT INTO `models` (`id`, `api_id`, `name`, `description`, `schema`) VALUES
+(@users_model_id, @users_api_id, 'User', 'ユーザーを定義するモデルです。', '{\n    "type": "object",\n    "properties": {\n        "id": {\n            "type": "string",\n            "description": "ID"\n        },\n        "name": {\n            "type": "string",\n            "description": "名前"\n        },\n        "email": {\n            "type": "string",\n            "description": "メールアドレス"\n        },\n        "description": {\n            "type": "string",\n            "description": "説明"\n        }\n    }\n}'),
 
-(@photos_model_id, 'Post', '写真を定義するモデルです。', '{\n    "type": "object",\n    "properties": {\n        "id": {\n            "type": "string",\n            "description": "ID"\n        },\n        "name": {\n            "type": "string",\n            "description": "写真名"\n        },\n       "url": {\n            "type": "string",\n            "description": "写真のURL"\n        }\n    }\n}');
+(@posts_model_id, @posts_api_id, 'Post', '投稿を定義するモデルです。', '{\n    "type": "object",\n    "properties": {\n        "id": {\n            "type": "string",\n            "description": "ID"\n        },\n        "name": {\n            "type": "string",\n            "description": "投稿名"\n        },\n       "body": {\n            "type": "string",\n            "description": "投稿内容"\n        },\n        "postedDate": {\n            "type": "string",\n            "description": "投稿日"\n        },\n        "postedUserId": {\n            "type": "string",\n            "description": "投稿者ID"\n        }\n    }\n}'),
+
+(@photos_model_id, @photos_api_id, 'Post', '写真を定義するモデルです。', '{\n    "type": "object",\n    "properties": {\n        "id": {\n            "type": "string",\n            "description": "ID"\n        },\n        "name": {\n            "type": "string",\n            "description": "写真名"\n        },\n       "url": {\n            "type": "string",\n            "description": "写真のURL"\n        }\n    }\n}');

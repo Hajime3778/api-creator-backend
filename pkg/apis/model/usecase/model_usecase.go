@@ -36,6 +36,11 @@ func (u *modelUsecase) GetByID(id string) (domain.Model, error) {
 	return u.repo.GetByID(id)
 }
 
+// GetByAPIID APIIDから1件のModelを取得します
+func (u *modelUsecase) GetByAPIID(apiID string) (domain.Model, error) {
+	return u.repo.GetByAPIID(apiID)
+}
+
 // Create Modelを作成します
 func (u *modelUsecase) Create(model domain.Model) (string, error) {
 	if model.ID == "" {

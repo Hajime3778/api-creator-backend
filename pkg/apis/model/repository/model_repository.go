@@ -11,6 +11,7 @@ import (
 type ModelRepository interface {
 	GetAll() ([]domain.Model, error)
 	GetByID(id string) (domain.Model, error)
+	GetByAPIID(apiID string) (domain.Model, error)
 	Create(model domain.Model) (string, error)
 	Update(model domain.Model) error
 	Delete(id string) error
@@ -39,6 +40,14 @@ func (r *modelRepository) GetAll() ([]domain.Model, error) {
 func (r *modelRepository) GetByID(id string) (domain.Model, error) {
 	model := domain.Model{}
 	err := r.db.Where("id = ?", id).First(&model).Error
+
+	return model, err
+}
+
+// GetByID Modelを1件取得します
+func (r *modelRepository) GetByAPIID(apiID string) (domain.Model, error) {
+	model := domain.Model{}
+	err := r.db.Where("api_id = ?", apiID).First(&model).Error
 
 	return model, err
 }

@@ -49,7 +49,7 @@ func TestGetByID(t *testing.T) {
 	mockAPI.Name = "name"
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
-	mockAPI.ModelID = ""
+
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
 
@@ -76,7 +76,6 @@ func TestCreate(t *testing.T) {
 	mockAPI.Name = "name"
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
-	mockAPI.ModelID = ""
 
 	mockAPIRepo := new(mocks.APIRepository)
 
@@ -100,7 +99,6 @@ func TestUpdate(t *testing.T) {
 	mockAPI.Name = "name"
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
-	mockAPI.ModelID = ""
 
 	// モック
 	mockAPIRepo := new(mocks.APIRepository)
@@ -125,7 +123,7 @@ func TestDelete(t *testing.T) {
 	mockAPI.Name = "name"
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
-	mockAPI.ModelID = ""
+
 	mockAPIRepo := new(mocks.APIRepository)
 
 	t.Run("test1", func(t *testing.T) {
