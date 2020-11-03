@@ -87,6 +87,8 @@ CREATE TABLE `models` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Models';
 
 INSERT INTO `models` (`id`, `name`, `description`, `schema`) VALUES
-(@users_model_id, 'User', 'ユーザーを定義するモデルです。', ''),
-(@posts_model_id, 'Post', '投稿を定義するモデルです。', ''),
-(@photos_model_id, 'Post', '写真を定義するモデルです。', '');
+(@users_model_id, 'User', 'ユーザーを定義するモデルです。', '{\n    "type": "object",\n    "properties": {\n        "id": {\n            "type": "string",\n            "description": "ID"\n        },\n        "name": {\n            "type": "string",\n            "description": "名前"\n        },\n        "email": {\n            "type": "string",\n            "description": "メールアドレス"\n        },\n        "description": {\n            "type": "string",\n            "description": "説明"\n        }\n    }\n}'),
+
+(@posts_model_id, 'Post', '投稿を定義するモデルです。', '{\n    "type": "object",\n    "properties": {\n        "id": {\n            "type": "string",\n            "description": "ID"\n        },\n        "name": {\n            "type": "string",\n            "description": "投稿名"\n        },\n       "body": {\n            "type": "string",\n            "description": "投稿内容"\n        },\n        "postedDate": {\n            "type": "string",\n            "description": "投稿日"\n        },\n        "postedUserId": {\n            "type": "string",\n            "description": "投稿者ID"\n        }\n    }\n}'),
+
+(@photos_model_id, 'Post', '写真を定義するモデルです。', '{\n    "type": "object",\n    "properties": {\n        "id": {\n            "type": "string",\n            "description": "ID"\n        },\n        "name": {\n            "type": "string",\n            "description": "写真名"\n        },\n       "url": {\n            "type": "string",\n            "description": "写真のURL"\n        }\n    }\n}');
