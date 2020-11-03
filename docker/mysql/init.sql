@@ -1,9 +1,9 @@
 DROP TABLE IF EXISTS `apis`;
 CREATE TABLE `apis` (
   `id` varchar(36) NOT NULL,
-  `name` varchar(40) NOT NULL DEFAULT '',
-  `url` varchar(40) NOT NULL DEFAULT '',
-  `description` varchar(200) NOT NULL DEFAULT '',
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `url` varchar(64) NOT NULL DEFAULT '',
+  `description` varchar(255) NOT NULL DEFAULT '',
   `model_id` varchar(36) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -26,10 +26,10 @@ DROP TABLE IF EXISTS `methods`;
 CREATE TABLE `methods` (
   `id` varchar(36) NOT NULL,
   `api_id` varchar(36) NOT NULL,
-  `type` varchar(10) NOT NULL DEFAULT '',
-  `url` varchar(40) NOT NULL DEFAULT '',
-  `description` varchar(200) NOT NULL DEFAULT '',
-  `request_parameter` varchar(60) NOT NULL DEFAULT '',
+  `type` varchar(8) NOT NULL DEFAULT '',
+  `url` varchar(64) NOT NULL DEFAULT '',
+  `description` varchar(255) NOT NULL DEFAULT '',
+  `request_parameter` varchar(64) NOT NULL DEFAULT '',
   `request_model_id` varchar(36) NOT NULL DEFAULT '',
   `response_model_id` varchar(36) NOT NULL DEFAULT '',
   `is_array` boolean,
@@ -78,9 +78,9 @@ INSERT INTO `methods` (`id`, `api_id`, `type`, `url`, `description`, `request_pa
 DROP TABLE IF EXISTS `models`;
 CREATE TABLE `models` (
   `id` varchar(36) NOT NULL,
-  `name` varchar(40) NOT NULL DEFAULT '',
-  `description` varchar(200) NOT NULL DEFAULT '',
-  `schema` varchar(512) NOT NULL DEFAULT '',
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `description` varchar(255) NOT NULL DEFAULT '',
+  `schema` text,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
