@@ -4,6 +4,7 @@ import (
 	"github.com/Hajime3778/api-creator-backend/pkg/apis/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/google/uuid"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 // ModelUsecase Interface
@@ -49,12 +50,24 @@ func (u *modelUsecase) Create(model domain.Model) (string, error) {
 		model.ID = id.String()
 	}
 	// TODO: JsonSchemaが正しい形式か検証する処理
+	sl := gojsonschema.NewSchemaLoader()
+	sl.Validate = true
+	err := sl.AddSchemas(gojsonschema.NewStringLoader(model.Schema))
+	if err != nil {
+		return "", err
+	}
 	return u.repo.Create(model)
 }
 
 // Update Modelを更新します。
 func (u *modelUsecase) Update(model domain.Model) error {
-	// TODO: JsonSchemaが正しい形式か検証する処理
+	/// TODO: JsonSchemaが正しい形式か検証する処理
+	sl := gojsonschema.NewSchemaLoader()
+	sl.Validate = true
+	err := sl.AddSchemas(gojsonschema.NewStringLoader(model.Schema))
+	if err != nil {
+		return err
+	}
 	return u.repo.Update(model)
 }
 

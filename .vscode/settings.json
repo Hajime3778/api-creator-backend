@@ -2,9 +2,11 @@
   "cSpell.words": [
     "APIID",
     "Hajime",
+    "gojsonschema",
     "gonic",
     "gorm",
     "jinzhu",
-    "stretchr"
+    "stretchr",
+    "xeipuuv"
   ]
 }
