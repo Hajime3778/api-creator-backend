@@ -33,7 +33,6 @@ func TestGetAll(t *testing.T) {
 	mockAPI.Name = "mockapi"
 	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
-	mockAPI.ModelID = ""
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
 	mockAPIs = append(mockAPIs, mockAPI)
@@ -61,7 +60,6 @@ func TestGetByID(t *testing.T) {
 	mockAPI.Name = "mockapi"
 	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
-	mockAPI.ModelID = ""
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
 
@@ -88,7 +86,6 @@ func TestCreate(t *testing.T) {
 	mockAPI.Name = "mockapi"
 	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
-	mockAPI.ModelID = ""
 
 	gin.SetMode(gin.TestMode)
 
@@ -114,7 +111,6 @@ func TestUpdate(t *testing.T) {
 	mockAPI.Name = "mockapi"
 	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
-	mockAPI.ModelID = ""
 
 	gin.SetMode(gin.TestMode)
 
@@ -140,7 +136,6 @@ func TestDelete(t *testing.T) {
 	mockAPI.Name = "mockapi"
 	mockAPI.URL = "url"
 	mockAPI.Description = "mock@mock.com"
-	mockAPI.ModelID = ""
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
 

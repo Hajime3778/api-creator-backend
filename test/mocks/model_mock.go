@@ -23,6 +23,12 @@ func (_m *ModelUsecase) GetByID(id string) (domain.Model, error) {
 	return ret.Get(0).(domain.Model), ret.Error(1)
 }
 
+// GetByAPIID is mock function
+func (_m *ModelUsecase) GetByAPIID(id string) (domain.Model, error) {
+	ret := _m.Called(id)
+	return ret.Get(0).(domain.Model), ret.Error(1)
+}
+
 // Create is mock function
 func (_m *ModelUsecase) Create(model domain.Model) (string, error) {
 	ret := _m.Called(model)
@@ -55,6 +61,12 @@ func (_m *ModelRepository) GetAll() ([]domain.Model, error) {
 // GetByID is mock function
 func (_m *ModelRepository) GetByID(id string) (domain.Model, error) {
 	ret := _m.Called(id)
+	return ret.Get(0).(domain.Model), ret.Error(1)
+}
+
+// GetByAPIID is mock function
+func (_m *ModelRepository) GetByAPIID(apiID string) (domain.Model, error) {
+	ret := _m.Called(apiID)
 	return ret.Get(0).(domain.Model), ret.Error(1)
 }
 
