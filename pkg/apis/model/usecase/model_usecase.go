@@ -10,6 +10,7 @@ import (
 type ModelUsecase interface {
 	GetAll() ([]domain.Model, error)
 	GetByID(id string) (domain.Model, error)
+	GetByAPIID(apiID string) (domain.Model, error)
 	Create(model domain.Model) (string, error)
 	Update(model domain.Model) error
 	Delete(id string) error
