@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: ../
-      dockerfile: Dockerfile
+      dockerfile: backend.dockerfile
     container_name: api-creator-backend
     ports:
       - 4000:4000

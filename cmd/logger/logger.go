@@ -10,12 +10,12 @@ import (
 )
 
 // LoggingSetting ログの設定をします。
-func LoggingSetting() {
+func LoggingSetting(outputDir string) {
 
 	// 日付単位でログファイルを作成する。
 	day := time.Now()
 	const layout = "2006-01-02"
-	filePath := "./log/" + day.Format(layout) + ".log"
+	filePath := outputDir + day.Format(layout) + ".log"
 
 	// ファイルに権限を付与する。
 	logFile, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)

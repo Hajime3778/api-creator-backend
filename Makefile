@@ -4,7 +4,7 @@ test:
 	go test -v -cover -covermode=atomic ./...
 
 build:
-	go build -o ${BINARY} main.go
+	go build -o ${BINARY} app/api-creator-backend.go
 
 unittest:
 	go test -short  ./...
