@@ -12,7 +12,7 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - ../config.json:/app/config.json
+      - ../backend.config.json:/app/backend.config.json
       - ../log:/app/log
       
   mysql: # Mysql container
