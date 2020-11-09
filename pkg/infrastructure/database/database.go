@@ -1,10 +1,14 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"net/url"
+	"time"
 
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/config"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/jinzhu/gorm"
 )
@@ -53,4 +57,20 @@ func (d *DB) NewMysqlConnection() *gorm.DB {
 	}
 
 	return db
+}
+
+// NewMongoDBConnection DBオブジェクトからMongoDBの接続を作成します
+func (d *DB) NewMongoDBConnection() (*mongo.Database, context.Context, context.CancelFunc) {
+	// MongoDBの接続情報を作成
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s",
+		d.Username,
+		d.Password,
+		d.Host,
+		d.Port)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	if err != nil {
+		panic(err.Error())
+	}
+	return client.Database(d.DBName), ctx, cancel
 }

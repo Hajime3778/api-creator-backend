@@ -1,38 +1,23 @@
 package main
 
 import (
-	"context"
 	"log"
-	"time"
 
+	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/config"
+	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 	_ "github.com/go-sql-driver/mysql"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
 	// logger.LoggingSetting("./log/")
-	// cfg := config.NewConfig("./documents.config.json")
-	// db := database.DB{
-	// 	Host:       cfg.DataBase.Host,
-	// 	Port:       cfg.DataBase.Port,
-	// 	Username:   cfg.DataBase.User,
-	// 	Password:   cfg.DataBase.Password,
-	// 	DBName:     cfg.DataBase.Database,
-	// 	Connection: cfg.DataBase.Host,
-	// }
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	cfg := config.NewConfig("../../documents.config.json")
+	db := database.NewDB(cfg)
+	conn, ctx, cancel := db.NewMongoDBConnection()
 	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://root:example@localhost:27017"))
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
 
-	collection := client.Database("api-creator-documents").Collection("test")
-	res, err := collection.InsertOne(ctx, bson.M{"name": "pi", "value": 3.14159})
+	collection := conn.Collection("test")
+	res, err := collection.InsertOne(ctx, bson.M{"name": "foo", "value": 123})
 	if err != nil {
 		log.Fatalln(err)
 		return
