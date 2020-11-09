@@ -1,28 +1,34 @@
 package main
 
 import (
-	"log"
+	"net/http"
 
-	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/config"
-	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 func main() {
 	// logger.LoggingSetting("./log/")
-	cfg := config.NewConfig("../../documents.config.json")
-	db := database.NewDB(cfg)
-	conn, ctx, cancel := db.NewMongoDBConnection()
-	defer cancel()
+	// cfg := config.NewConfig("../../documents.config.json")
+	// db := database.NewDB(cfg)
+	// conn, ctx, cancel := db.NewMongoDBConnection()
+	// defer cancel()
 
-	collection := conn.Collection("test")
-	res, err := collection.InsertOne(ctx, bson.M{"name": "foo", "value": 123})
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
-	id := res.InsertedID
+	// collection := conn.Collection("test")
+	// res, err := collection.InsertOne(ctx, bson.M{"name": "foo", "value": 123})
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// 	return
+	// }
+	// id := res.InsertedID
 
-	log.Println(id)
+	// log.Println(id)
+
+	engine := gin.Default()
+	engine.Any("/*proxyPath", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": c.Param("proxyPath"),
+		})
+	})
+	engine.Run(":9000")
 }
