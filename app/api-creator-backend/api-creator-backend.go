@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	logger.LoggingSetting("../../log/")
-	cfg := config.NewConfig("../../backend.config.json")
+	logger.LoggingSetting("./log/")
+	cfg := config.NewConfig("./backend.config.json")
 	db := database.NewDB(cfg)
 
 	server := server.NewServer(cfg, db)
