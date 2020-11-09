@@ -33,19 +33,20 @@ func newRouter() *gin.Engine {
 func (s *Server) SetUpRouter() *gin.Engine {
 	// Group v1
 	apiV1 := s.router.Group("api/v1")
+	conn := s.db.NewMysqlConnection()
 
 	// APIs
-	apiRepository := _apiRepository.NewAPIRepository(s.db)
+	apiRepository := _apiRepository.NewAPIRepository(conn)
 	apiUsecase := _apiUsecase.NewAPIUsecase(apiRepository)
 	_apiHandler.NewAPIHandler(apiV1, apiUsecase)
 
 	// Methods
-	methodRepository := _methodRepository.NewMethodRepository(s.db)
+	methodRepository := _methodRepository.NewMethodRepository(conn)
 	methodUsecase := _methodUsecase.NewMethodUsecase(methodRepository)
 	_methodHandler.NewMethodHandler(apiV1, methodUsecase)
 
 	// Models
-	modelRepository := _modelRepository.NewModelRepository(s.db)
+	modelRepository := _modelRepository.NewModelRepository(conn)
 	modelUsecase := _modelUsecase.NewModelUsecase(modelRepository)
 	_modelHandler.NewModelHandler(apiV1, modelUsecase)
 

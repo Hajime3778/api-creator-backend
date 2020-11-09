@@ -8,7 +8,6 @@ import (
 
 	"github.com/Hajime3778/api-creator-backend/pkg/apis/method/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
-	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 	"github.com/google/uuid"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -17,15 +16,14 @@ import (
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
-func setUpMockDB() (sqlmock.Sqlmock, *database.DB) {
+func setUpMockDB() (sqlmock.Sqlmock, *gorm.DB) {
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		return strings.Replace(defaultTableName, "_data_table", "", 1)
 	}
 	d, mock, _ := sqlmock.New()
-	db := new(database.DB)
-	db.Connection, _ = gorm.Open("mysql", d)
+	conn, _ := gorm.Open("mysql", d)
 
-	return mock, db
+	return mock, conn
 }
 
 func TestGetAll(t *testing.T) {

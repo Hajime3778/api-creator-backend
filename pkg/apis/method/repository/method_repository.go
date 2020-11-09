@@ -2,7 +2,6 @@ package repository
 
 import (
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
-	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 
 	"github.com/jinzhu/gorm"
 )
@@ -22,9 +21,9 @@ type methodRepository struct {
 }
 
 // NewMethodRepository MethodRepositoryインターフェイスを表すオブジェクトを作成します
-func NewMethodRepository(db *database.DB) MethodRepository {
+func NewMethodRepository(db *gorm.DB) MethodRepository {
 	return &methodRepository{
-		db: db.Connection,
+		db: db,
 	}
 }
 

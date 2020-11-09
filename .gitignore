@@ -1,7 +1,5 @@
 .DS_Store
-config.ini
 *.log
 
 # 実行ファイル
 __debug_bin
-api-creator-backend

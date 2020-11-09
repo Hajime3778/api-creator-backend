@@ -8,7 +8,6 @@ import (
 
 	"github.com/Hajime3778/api-creator-backend/pkg/apis/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
-	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 	"github.com/google/uuid"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -17,15 +16,14 @@ import (
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
-func setUpMockDB() (sqlmock.Sqlmock, *database.DB) {
+func setUpMockDB() (sqlmock.Sqlmock, *gorm.DB) {
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		return strings.Replace(defaultTableName, "_data_table", "", 1)
 	}
 	d, mock, _ := sqlmock.New()
-	db := new(database.DB)
-	db.Connection, _ = gorm.Open("mysql", d)
+	conn, _ := gorm.Open("mysql", d)
 
-	return mock, db
+	return mock, conn
 }
 
 func TestGetAll(t *testing.T) {
@@ -73,7 +71,7 @@ func TestCreate(t *testing.T) {
 	mockModel.UpdatedAt = time.Time{}
 
 	mock.ExpectBegin()
-	query := regexp.QuoteMeta("INSERT INTO `models` (`id`,`name`,`description`,`schema`,`created_at`,`updated_at`) VALUES (?,?,?,?,?,?)")
+	query := regexp.QuoteMeta("INSERT INTO `models` (`id`,`api_id`,`name`,`description`,`schema`,`created_at`,`updated_at`) VALUES (?,?,?,?,?,?,?)")
 	mock.ExpectExec(query).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
@@ -90,6 +88,7 @@ func TestUpdate(t *testing.T) {
 
 	mockModel := domain.Model{}
 	mockModel.ID = modelId.String()
+	mockModel.APIID = ""
 	mockModel.Name = "name"
 	mockModel.Description = "description"
 	mockModel.Schema = ""
@@ -97,12 +96,12 @@ func TestUpdate(t *testing.T) {
 	mockModel.UpdatedAt = time.Time{}
 
 	selectQuery := regexp.QuoteMeta("SELECT * FROM `models` WHERE (id = ?) ORDER BY `models`.`id` ASC LIMIT 1")
-	selectRows := sqlmock.NewRows([]string{"id", "name", "description", "schema", "created_at", "updated_at"}).AddRow(modelId.String(), "name", "description", "schema", time.Now(), time.Now())
+	selectRows := sqlmock.NewRows([]string{"id", "api_id", "name", "description", "schema", "created_at", "updated_at"}).AddRow(modelId.String(), "api_id", "name", "description", "schema", time.Now(), time.Now())
 
 	mock.ExpectQuery(selectQuery).WillReturnRows(selectRows)
 
 	mock.ExpectBegin()
-	query := regexp.QuoteMeta("UPDATE `models` SET `name` = ?, `description` = ?, `schema` = ?, `updated_at` = ? WHERE `models`.`id` = ?")
+	query := regexp.QuoteMeta("UPDATE `models` SET `api_id` = ?, `name` = ?, `description` = ?, `schema` = ?, `updated_at` = ? WHERE `models`.`id` = ?")
 	mock.ExpectExec(query).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
-	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 
 	"github.com/jinzhu/gorm"
 )
@@ -22,9 +21,9 @@ type modelRepository struct {
 }
 
 // NewModelRepository ModelRepositoryインターフェイスを表すオブジェクトを作成します
-func NewModelRepository(db *database.DB) ModelRepository {
+func NewModelRepository(db *gorm.DB) ModelRepository {
 	return &modelRepository{
-		db: db.Connection,
+		db: db,
 	}
 }
 

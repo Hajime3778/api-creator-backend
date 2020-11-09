@@ -2,7 +2,6 @@ package repository
 
 import (
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
-	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 
 	"github.com/jinzhu/gorm"
 )
@@ -21,9 +20,9 @@ type apiRepository struct {
 }
 
 // NewAPIRepository APIRepositoryインターフェイスを表すオブジェクトを作成します
-func NewAPIRepository(db *database.DB) APIRepository {
+func NewAPIRepository(db *gorm.DB) APIRepository {
 	return &apiRepository{
-		db: db.Connection,
+		db: db,
 	}
 }
 
