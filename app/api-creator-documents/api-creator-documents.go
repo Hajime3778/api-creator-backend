@@ -27,7 +27,8 @@ func main() {
 	engine := gin.Default()
 	engine.Any("/*proxyPath", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message": c.Param("proxyPath"),
+			"method": c.Request.Method,
+			"path":   c.Param("proxyPath"),
 		})
 	})
 	engine.Run(":9000")
