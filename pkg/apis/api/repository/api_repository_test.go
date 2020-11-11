@@ -58,6 +58,22 @@ func TestGetByID(t *testing.T) {
 	assert.NotNil(t, api)
 }
 
+func TestGetByURL(t *testing.T) {
+	mock, db := setUpMockDB()
+	apiId, _ := uuid.NewRandom()
+
+	query := regexp.QuoteMeta("SELECT * FROM `apis` WHERE '" + apiId.String() + "' like CONCAT('%', url, '%')")
+	rows := sqlmock.NewRows([]string{"id", "name", "url", "description", "created_at", "updated_at"}).
+		AddRow(apiId.String(), "name", "url", "description", time.Now(), time.Now())
+	mock.ExpectQuery(query).WillReturnRows(rows)
+
+	apiRepository := repository.NewAPIRepository(db)
+
+	api, err := apiRepository.GetByURL(apiId.String())
+	assert.NoError(t, err)
+	assert.NotNil(t, api)
+}
+
 func TestCreate(t *testing.T) {
 	mock, db := setUpMockDB()
 	apiId, _ := uuid.NewRandom()

@@ -10,6 +10,7 @@ import (
 type APIRepository interface {
 	GetAll() ([]domain.API, error)
 	GetByID(id string) (domain.API, error)
+	GetByURL(url string) (domain.API, error)
 	Create(api domain.API) (string, error)
 	Update(api domain.API) error
 	Delete(id string) error
@@ -38,6 +39,14 @@ func (r *apiRepository) GetAll() ([]domain.API, error) {
 func (r *apiRepository) GetByID(id string) (domain.API, error) {
 	api := domain.API{}
 	err := r.db.Where("id = ?", id).First(&api).Error
+
+	return api, err
+}
+
+// GetByURL APIを1件取得します
+func (r *apiRepository) GetByURL(url string) (domain.API, error) {
+	api := domain.API{}
+	err := r.db.Raw("SELECT * FROM `apis` WHERE '" + url + "' like CONCAT('%', url, '%')").Scan(&api).Error
 
 	return api, err
 }
