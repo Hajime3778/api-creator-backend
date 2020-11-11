@@ -57,22 +57,39 @@ func (u *apiServerUsecase) getRequestedMethod(httpMethod string, requestedURL st
 	// MethodのURL部分を抽出
 	requestedMethodURL := strings.Replace(requestedURL, api.URL, "", 1)
 
-	// /と{}で囲まれた箇所を削除
-	re := regexp.MustCompile(`/|\{.+?\}`)
+	// /{}で囲まれた箇所を削除
+	re := regexp.MustCompile(`/\{.+?\}`)
 
 	// ※パラメータが2つ以上やクエリストリングは現在の仕様にないので今は考えない！
 	for _, method := range methods {
-		if method.Type == httpMethod {
-			// methodにURLがないパターン
-			if requestedMethodURL == "" && method.URL == "" {
-				returnMethod = method
-				break
-			}
+		if method.Type != httpMethod {
+			continue
+		}
 
-			// methodのURLからパラメータ部分を削除
-			methodURL := re.ReplaceAllString(method.URL, "")
-			// パラメータ以外のmethodのURL(メソッド名)が合致していれば返却
-			if methodURL != "" && strings.Contains(requestedMethodURL, methodURL) {
+		// methodにURLがないパターン
+		if requestedMethodURL == "" && method.URL == "" {
+			returnMethod = method
+			break
+		}
+
+		// メソッド名が指定されているパターン(例："/foo/{bar}")
+		// methodのURLからパラメータ部分を削除
+		methodURL := re.ReplaceAllString(method.URL, "")
+		if methodURL != "" {
+			methodURL = methodURL + "/"
+		}
+		// パラメータ以外のmethodのURL(メソッド名)が合致していれば返却
+		if methodURL != "" && strings.Contains(requestedMethodURL, methodURL) {
+			returnMethod = method
+			break
+		} else {
+			// パラメータのみ指定されているパターン(例："/{bar}")
+			params := re.FindAllStringSubmatch(method.URL, -1)
+			paramsCount := len(params)
+			requestedSlushCount := strings.Count(requestedMethodURL, "/")
+
+			// リクエスト内の"/"の数と、Methodのパラメータの数が同じであれば返却
+			if requestedSlushCount == paramsCount {
 				returnMethod = method
 				break
 			}
