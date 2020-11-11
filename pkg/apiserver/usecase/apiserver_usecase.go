@@ -69,8 +69,9 @@ func (u *apiServerUsecase) getRequestedMethod(httpMethod string, requestedURL st
 				break
 			}
 
-			// リクエストとMethod.URLの/数が同じものを検索する
+			// methodのURLからパラメータ部分を削除
 			methodURL := re.ReplaceAllString(method.URL, "")
+			// パラメータ以外のmethodのURL(メソッド名)が合致していれば返却
 			if methodURL != "" && strings.Contains(requestedMethodURL, methodURL) {
 				returnMethod = method
 				break
