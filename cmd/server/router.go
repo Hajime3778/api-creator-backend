@@ -1,15 +1,15 @@
 package server
 
 import (
-	_apiHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/api/handler"
-	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/api/repository"
-	_apiUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/api/usecase"
-	_methodHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/method/handler"
-	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/method/repository"
-	_methodUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/method/usecase"
-	_modelHandler "github.com/Hajime3778/api-creator-backend/pkg/apis/model/handler"
-	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/apis/model/repository"
-	_modelUsecase "github.com/Hajime3778/api-creator-backend/pkg/apis/model/usecase"
+	_apiHandler "github.com/Hajime3778/api-creator-backend/pkg/admin/api/handler"
+	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
+	_apiUsecase "github.com/Hajime3778/api-creator-backend/pkg/admin/api/usecase"
+	_methodHandler "github.com/Hajime3778/api-creator-backend/pkg/admin/method/handler"
+	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
+	_methodUsecase "github.com/Hajime3778/api-creator-backend/pkg/admin/method/usecase"
+	_modelHandler "github.com/Hajime3778/api-creator-backend/pkg/admin/model/handler"
+	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
+	_modelUsecase "github.com/Hajime3778/api-creator-backend/pkg/admin/model/usecase"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

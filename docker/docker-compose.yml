@@ -4,22 +4,22 @@ services:
   web:
     build:
       context: ../
-      dockerfile: backend.dockerfile
-    container_name: api-creator-backend
+      dockerfile: admin.dockerfile
+    container_name: api-creator-admin
     ports:
       - 4000:4000
     depends_on:
       mysql:
         condition: service_healthy
     volumes:
-      - ../backend.config.json:/app/backend.config.json
+      - ../admin.config.json:/app/admin.config.json
       - ../log:/app/log
       
   mysql: # Mysql container
     build:
       context: ./mysql
       dockerfile: Dockerfile
-    container_name: api-creator-backend-mysql
+    container_name: api-creator-admin-mysql
     image: mysql:5.7
     restart: always
     volumes:
@@ -27,7 +27,7 @@ services:
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       MYSQL_ROOT_PASSWORD: rootPassword
-      MYSQL_DATABASE: api-creator
+      MYSQL_DATABASE: api-creator-admin
       MYSQL_USER:     user
       MYSQL_PASSWORD: password
       TZ: Asia/Tokyo
@@ -39,7 +39,7 @@ services:
       retries: 10
 
   pma: # phpMyAdmin container
-    container_name: api-creator-backend-pma
+    container_name: api-creator-admin-pma
     image: phpmyadmin/phpmyadmin:latest
     restart: always
     environment:
