@@ -32,8 +32,9 @@ func (h *APIServerHandler) RequestDocumentServer(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
+			"error": err.Error(),
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
