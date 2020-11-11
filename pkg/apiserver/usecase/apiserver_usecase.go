@@ -57,10 +57,7 @@ func (u *apiServerUsecase) getRequestedMethod(httpMethod string, requestedURL st
 	// MethodのURL部分を抽出
 	requestedMethodURL := strings.Replace(requestedURL, api.URL, "", 1)
 
-	// 区切り文字で分割する
-	//params := regexp.MustCompile("[/?]").Split(methodURL, -1)
-	//requestedSlashCount := strings.Count(requestedMethodURL, "/")
-
+	// /と{}で囲まれた箇所を削除
 	re := regexp.MustCompile(`/|\{.+?\}`)
 
 	// ※パラメータが2つ以上やクエリストリングは現在の仕様にないので今は考えない！
