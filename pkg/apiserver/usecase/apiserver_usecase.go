@@ -86,10 +86,11 @@ func (u *apiServerUsecase) getRequestedMethod(httpMethod string, requestedURL st
 			// パラメータのみ指定されているパターン(例："/{bar}")
 			params := re.FindAllStringSubmatch(method.URL, -1)
 			paramsCount := len(params)
+			methodURLSlushCount := strings.Count(method.URL, "/")
 			requestedSlushCount := strings.Count(requestedMethodURL, "/")
 
-			// リクエスト内の"/"の数と、Methodのパラメータの数が同じであれば返却
-			if requestedSlushCount == paramsCount {
+			// MethodURL,リクエスト内の"/"の数と、Methodのパラメータの数が同じであれば返却
+			if methodURLSlushCount == requestedSlushCount && requestedSlushCount == paramsCount {
 				returnMethod = method
 				break
 			}
