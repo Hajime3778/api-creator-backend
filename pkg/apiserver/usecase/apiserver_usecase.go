@@ -2,11 +2,13 @@ package usecase
 
 import (
 	"errors"
+	"log"
 	"regexp"
 	"strings"
 
 	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
 	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
+	_apiserverRepository "github.com/Hajime3778/api-creator-backend/pkg/apiserver/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 )
 
@@ -16,15 +18,17 @@ type APIServerUsecase interface {
 }
 
 type apiServerUsecase struct {
-	apiRepo    _apiRepository.APIRepository
-	methodRepo _methodRepository.MethodRepository
+	apiRepo       _apiRepository.APIRepository
+	methodRepo    _methodRepository.MethodRepository
+	apiserverRepo _apiserverRepository.APIServerRepository
 }
 
 // NewAPIServerUsecase APIServerUsecaseインターフェイスを表すオブジェクトを作成します
-func NewAPIServerUsecase(apiRepo _apiRepository.APIRepository, methodRepo _methodRepository.MethodRepository) APIServerUsecase {
+func NewAPIServerUsecase(apiRepo _apiRepository.APIRepository, methodRepo _methodRepository.MethodRepository, apiserverRepo _apiserverRepository.APIServerRepository) APIServerUsecase {
 	return &apiServerUsecase{
-		apiRepo:    apiRepo,
-		methodRepo: methodRepo,
+		apiRepo:       apiRepo,
+		methodRepo:    methodRepo,
+		apiserverRepo: apiserverRepo,
 	}
 }
 
@@ -40,6 +44,17 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string) 
 
 	// リクエストされたパラメータを取得
 	param := getRequestedURLParameter(url, api.URL, method.URL)
+
+	switch httpMethod {
+	case "GET":
+		log.Println("GET")
+	case "POST":
+		log.Println("POST")
+	case "PUT":
+		log.Println("PUT")
+	case "DELETE":
+		log.Println("DELETE")
+	}
 
 	return method, param, err
 }
