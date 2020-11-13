@@ -3,7 +3,9 @@ package repository
 import (
 	"context"
 	"errors"
+	"log"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -11,7 +13,7 @@ import (
 type APIServerRepository interface {
 	Get(param string) error
 	GetList(param string) error
-	Create() (string, error)
+	Create(body []byte) (string, error)
 	Update() error
 	Delete() error
 }
@@ -40,7 +42,19 @@ func (r *apiServerRepository) GetList(param string) error {
 }
 
 // Create APIServerを追加します
-func (r *apiServerRepository) Create() (string, error) {
+func (r *apiServerRepository) Create(body []byte) (string, error) {
+	collection := r.db.Collection("test")
+
+	var b interface{}
+
+	err := bson.UnmarshalExtJSON(body, false, &b)
+	// res, err := collection.InsertOne(r.ctx, bson.M{"name": "foo", "value": 123})
+	res, err := collection.InsertOne(r.ctx, &b)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	id := res.InsertedID
+	log.Println(id)
 	return "sample_id", errors.New("not inprement")
 }
 

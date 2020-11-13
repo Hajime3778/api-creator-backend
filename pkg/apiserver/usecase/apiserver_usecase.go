@@ -14,7 +14,7 @@ import (
 
 // APIServerUsecase Interface
 type APIServerUsecase interface {
-	RequestDocumentServer(httpMethod string, url string) (domain.Method, string, error)
+	RequestDocumentServer(httpMethod string, url string, body []byte) (domain.Method, string, error)
 }
 
 type apiServerUsecase struct {
@@ -33,7 +33,7 @@ func NewAPIServerUsecase(apiRepo _apiRepository.APIRepository, methodRepo _metho
 }
 
 // RequestDocumentServer リクエスト情報からMethodを特定し、ドキュメントに対してCRUDします
-func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string) (domain.Method, string, error) {
+func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, body []byte) (domain.Method, string, error) {
 	api, err := u.apiRepo.GetByURL(url)
 	if err != nil {
 		return domain.Method{}, "", err
@@ -49,7 +49,7 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string) 
 	case "GET":
 		log.Println("GET")
 	case "POST":
-		log.Println("POST")
+		u.apiserverRepo.Create(body)
 	case "PUT":
 		log.Println("PUT")
 	case "DELETE":
