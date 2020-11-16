@@ -19,8 +19,11 @@ clean:
 docker:
 	docker build -t ${ADMIN} .
 
-run:
+build-run:
 	docker-compose -f ./docker/docker-compose.yml up --build -d
+
+run:
+	docker-compose -f ./docker/docker-compose.yml up -d
 
 stop:
 	docker-compose -f ./docker/docker-compose.yml down --volumes

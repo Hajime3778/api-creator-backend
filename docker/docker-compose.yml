@@ -1,4 +1,4 @@
-version: "2.3"
+version: "3.7"
 
 services:
   web:
@@ -18,7 +18,7 @@ services:
   mysql: # Mysql container
     build:
       context: ./mysql
-      dockerfile: Dockerfile
+      dockerfile: mysql.dockerfile
     container_name: api-creator-admin-mysql
     image: mysql:5.7
     restart: always
@@ -49,3 +49,29 @@ services:
       - 8080:80
     links:
       - mysql:db
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: api-creator-documents
+      TZ: Asia/Tokyo
+    volumes:
+      # - ./mongo/db:/data/db # DBを永続化する場合コメントアウト
+      - ./mongo/configdb:/data/configdb
+      - ./mongo/init/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example

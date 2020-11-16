@@ -1,5 +1,6 @@
 .DS_Store
 *.log
+docker/mongo/db/
 
 # 実行ファイル
 __debug_bin
