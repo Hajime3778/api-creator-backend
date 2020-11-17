@@ -3,6 +3,7 @@ package main
 import (
 	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
 	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
+	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/apiserver/handler"
 	_apiserverRepository "github.com/Hajime3778/api-creator-backend/pkg/apiserver/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/apiserver/usecase"
@@ -46,11 +47,12 @@ func main() {
 
 	apiRepository := _apiRepository.NewAPIRepository(mysqlConn)
 	methodRepository := _methodRepository.NewMethodRepository(mysqlConn)
+	modelRepository := _modelRepository.NewModelRepository(mysqlConn)
 	apiserverRepository := _apiserverRepository.NewAPIServerRepository(ctx, mongoConn)
 
 	engine := gin.Default()
 
-	apiserverUsecase := usecase.NewAPIServerUsecase(apiRepository, methodRepository, apiserverRepository)
+	apiserverUsecase := usecase.NewAPIServerUsecase(apiRepository, methodRepository, modelRepository, apiserverRepository)
 	handler.NewAPIServerHandler(engine, apiserverUsecase)
 
 	engine.Run(":9000")

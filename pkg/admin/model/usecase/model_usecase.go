@@ -49,7 +49,7 @@ func (u *modelUsecase) Create(model domain.Model) (string, error) {
 		id, _ := uuid.NewRandom()
 		model.ID = id.String()
 	}
-	// TODO: JsonSchemaが正しい形式か検証する処理
+	// JsonSchemaが正しい形式か検証
 	sl := gojsonschema.NewSchemaLoader()
 	sl.Validate = true
 	err := sl.AddSchemas(gojsonschema.NewStringLoader(model.Schema))
@@ -61,7 +61,7 @@ func (u *modelUsecase) Create(model domain.Model) (string, error) {
 
 // Update Modelを更新します。
 func (u *modelUsecase) Update(model domain.Model) error {
-	/// TODO: JsonSchemaが正しい形式か検証する処理
+	/// JsonSchemaが正しい形式か検証
 	sl := gojsonschema.NewSchemaLoader()
 	sl.Validate = true
 	err := sl.AddSchemas(gojsonschema.NewStringLoader(model.Schema))

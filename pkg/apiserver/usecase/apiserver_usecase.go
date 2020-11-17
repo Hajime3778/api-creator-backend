@@ -8,6 +8,7 @@ import (
 
 	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
 	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
+	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	_apiserverRepository "github.com/Hajime3778/api-creator-backend/pkg/apiserver/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 )
@@ -20,14 +21,16 @@ type APIServerUsecase interface {
 type apiServerUsecase struct {
 	apiRepo       _apiRepository.APIRepository
 	methodRepo    _methodRepository.MethodRepository
+	modelRepo     _modelRepository.ModelRepository
 	apiserverRepo _apiserverRepository.APIServerRepository
 }
 
 // NewAPIServerUsecase APIServerUsecaseインターフェイスを表すオブジェクトを作成します
-func NewAPIServerUsecase(apiRepo _apiRepository.APIRepository, methodRepo _methodRepository.MethodRepository, apiserverRepo _apiserverRepository.APIServerRepository) APIServerUsecase {
+func NewAPIServerUsecase(apiRepo _apiRepository.APIRepository, methodRepo _methodRepository.MethodRepository, modelRepo _modelRepository.ModelRepository, apiserverRepo _apiserverRepository.APIServerRepository) APIServerUsecase {
 	return &apiServerUsecase{
 		apiRepo:       apiRepo,
 		methodRepo:    methodRepo,
+		modelRepo:     modelRepo,
 		apiserverRepo: apiserverRepo,
 	}
 }
@@ -42,10 +45,41 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 	// 対象のメソッドを取得
 	method, err := u.getRequestedMethod(httpMethod, url, api)
 
+	if err != nil {
+		return domain.Method{}, "", err
+	}
+
+	if method.Type != httpMethod {
+		return domain.Method{}, "", err
+	}
+
 	// リクエストされたパラメータを取得
 	param := getRequestedURLParameter(url, api.URL, method.URL)
 
-	switch httpMethod {
+	//model, err := u.modelRepo.GetByAPIID(api.ID)
+
+	// schemaLoader := gojsonschema.NewReferenceLoader("file:///home/me/schema.json")
+	// documentLoader := gojsonschema.NewReferenceLoader("file:///home/me/document.json")
+
+	// result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+
+	// if result.Valid() {
+	// 	fmt.Printf("The document is valid\n")
+	// } else {
+	// 	fmt.Printf("The document is not valid. see errors :\n")
+	// 	for _, desc := range result.Errors() {
+	// 		fmt.Printf("- %s\n", desc)
+	// 	}
+	// }
+
+	if err != nil {
+		return domain.Method{}, "", err
+	}
+
+	switch method.Type {
 	case "GET":
 		log.Println("GET")
 	case "POST":

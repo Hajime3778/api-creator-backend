@@ -48,10 +48,9 @@ func (r *apiServerRepository) Create(body []byte) (string, error) {
 	var b interface{}
 
 	err := bson.UnmarshalExtJSON(body, false, &b)
-	// res, err := collection.InsertOne(r.ctx, bson.M{"name": "foo", "value": 123})
 	res, err := collection.InsertOne(r.ctx, &b)
 	if err != nil {
-		log.Fatalln(err)
+		return "", err
 	}
 	id := res.InsertedID
 	log.Println(id)

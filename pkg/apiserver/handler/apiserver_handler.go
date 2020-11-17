@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/Hajime3778/api-creator-backend/pkg/apiserver/usecase"
@@ -28,13 +27,7 @@ func (h *APIServerHandler) RequestDocumentServer(c *gin.Context) {
 	httpMethod := c.Request.Method
 	// 最初の文字は/なので削除する
 	url := c.Param("proxyPath")[1:]
-
-	// buf := make([]byte, 2048)
-	// num, _ := c.Request.Body.Read(buf)
-	// body := string(buf[0:num])
-
 	body, _ := c.GetRawData()
-	log.Println(string(body))
 
 	method, param, err := h.usecase.RequestDocumentServer(httpMethod, url, body)
 
