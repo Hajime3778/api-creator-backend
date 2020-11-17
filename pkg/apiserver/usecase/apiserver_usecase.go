@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	_apiserverRepository "github.com/Hajime3778/api-creator-backend/pkg/apiserver/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 // APIServerUsecase Interface
@@ -56,24 +58,25 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 	// リクエストされたパラメータを取得
 	param := getRequestedURLParameter(url, api.URL, method.URL)
 
-	//model, err := u.modelRepo.GetByAPIID(api.ID)
+	model, err := u.modelRepo.GetByAPIID(api.ID)
 
-	// schemaLoader := gojsonschema.NewReferenceLoader("file:///home/me/schema.json")
-	// documentLoader := gojsonschema.NewReferenceLoader("file:///home/me/document.json")
+	schemaLoader := gojsonschema.NewStringLoader(model.Schema)
+	documentLoader := gojsonschema.NewStringLoader(string(body))
 
-	// result, err := gojsonschema.Validate(schemaLoader, documentLoader)
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		panic(err.Error())
+	}
 
-	// if result.Valid() {
-	// 	fmt.Printf("The document is valid\n")
-	// } else {
-	// 	fmt.Printf("The document is not valid. see errors :\n")
-	// 	for _, desc := range result.Errors() {
-	// 		fmt.Printf("- %s\n", desc)
-	// 	}
-	// }
+	if result.Valid() {
+		fmt.Printf("The document is valid\n")
+	} else {
+		fmt.Printf("The document is not valid. see errors :\n")
+		for _, desc := range result.Errors() {
+			fmt.Printf("- %s\n", desc)
+		}
+		panic(result.Errors())
+	}
 
 	if err != nil {
 		return domain.Method{}, "", err

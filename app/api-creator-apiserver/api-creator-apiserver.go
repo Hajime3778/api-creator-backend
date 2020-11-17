@@ -37,8 +37,7 @@ func main() {
 
 	// API Server側のMongoDB接続
 	apiserverCfg := config.NewConfig("../../apiserver.config.json")
-	db := database.NewDB(apiserverCfg)
-	mongoConn, ctx, _ := db.NewMongoDBConnection()
+	mongoDB := database.NewDB(apiserverCfg)
 
 	// 管理画面で設定されたMysql接続
 	mysqlCfg := config.NewConfig("../../admin.config.json")
@@ -48,7 +47,7 @@ func main() {
 	apiRepository := _apiRepository.NewAPIRepository(mysqlConn)
 	methodRepository := _methodRepository.NewMethodRepository(mysqlConn)
 	modelRepository := _modelRepository.NewModelRepository(mysqlConn)
-	apiserverRepository := _apiserverRepository.NewAPIServerRepository(ctx, mongoConn)
+	apiserverRepository := _apiserverRepository.NewAPIServerRepository(mongoDB)
 
 	engine := gin.Default()
 

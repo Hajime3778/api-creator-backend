@@ -1,12 +1,11 @@
 package repository
 
 import (
-	"context"
 	"errors"
 	"log"
 
+	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // APIServerRepository Interface
@@ -19,15 +18,13 @@ type APIServerRepository interface {
 }
 
 type apiServerRepository struct {
-	ctx context.Context
-	db  *mongo.Database
+	db *database.DB
 }
 
 // NewAPIServerRepository APIServerRepositoryインターフェイスを表すオブジェクトを作成します
-func NewAPIServerRepository(ctx context.Context, db *mongo.Database) APIServerRepository {
+func NewAPIServerRepository(db *database.DB) APIServerRepository {
 	return &apiServerRepository{
-		ctx: ctx,
-		db:  db,
+		db: db,
 	}
 }
 
@@ -43,12 +40,16 @@ func (r *apiServerRepository) GetList(param string) error {
 
 // Create APIServerを追加します
 func (r *apiServerRepository) Create(body []byte) (string, error) {
-	collection := r.db.Collection("test")
+
+	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
+	defer cancel()
+
+	collection := mongoConn.Collection("test")
 
 	var b interface{}
 
 	err := bson.UnmarshalExtJSON(body, false, &b)
-	res, err := collection.InsertOne(r.ctx, &b)
+	res, err := collection.InsertOne(ctx, &b)
 	if err != nil {
 		return "", err
 	}
