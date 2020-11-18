@@ -1,0 +1,13 @@
+{
+  "server": {
+    "port": ":4000",
+    "timeout": 10
+  },
+  "database": {
+    "host": "mysql",
+    "port": "3306",
+    "user": "user",
+    "password": "password",
+    "database": "api-creator-admin"
+  }
+}

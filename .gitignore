@@ -1,7 +1,6 @@
 .DS_Store
-config.ini
 *.log
+docker/mongo/db/
 
 # 実行ファイル
 __debug_bin
-api-creator-backend

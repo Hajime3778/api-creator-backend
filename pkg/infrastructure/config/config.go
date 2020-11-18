@@ -22,9 +22,9 @@ type Config struct {
 }
 
 // NewConfig 設定ファイルを読み込みCondigを作成します
-func NewConfig() *Config {
+func NewConfig(filePath string) *Config {
 
-	viper.SetConfigFile("config.json")
+	viper.SetConfigFile(filePath)
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s", err))

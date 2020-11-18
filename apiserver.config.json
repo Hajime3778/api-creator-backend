@@ -1,0 +1,13 @@
+{
+  "server": {
+    "port": ":6000",
+    "timeout": 10
+  },
+  "database": {
+    "host": "localhost",
+    "port": "27017",
+    "user": "root",
+    "password": "example",
+    "database": "api-creator-documents"
+  }
+}

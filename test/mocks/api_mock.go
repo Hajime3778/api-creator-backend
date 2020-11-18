@@ -58,6 +58,12 @@ func (_m *APIRepository) GetByID(id string) (domain.API, error) {
 	return ret.Get(0).(domain.API), ret.Error(1)
 }
 
+// GetByURL is mock function
+func (_m *APIRepository) GetByURL(url string) (domain.API, error) {
+	ret := _m.Called(url)
+	return ret.Get(0).(domain.API), ret.Error(1)
+}
+
 // Create is mock function
 func (_m *APIRepository) Create(api domain.API) (string, error) {
 	ret := _m.Called(api)

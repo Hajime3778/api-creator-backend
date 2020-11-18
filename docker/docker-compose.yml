@@ -1,25 +1,25 @@
-version: "2.3"
+version: "3.7"
 
 services:
   web:
     build:
       context: ../
-      dockerfile: Dockerfile
-    container_name: api-creator-backend
+      dockerfile: admin.dockerfile
+    container_name: api-creator-admin
     ports:
       - 4000:4000
     depends_on:
       mysql:
         condition: service_healthy
     volumes:
-      - ../config.json:/app/config.json
+      - ../admin.config.json:/app/admin.config.json
       - ../log:/app/log
       
   mysql: # Mysql container
     build:
       context: ./mysql
-      dockerfile: Dockerfile
-    container_name: api-creator-backend-mysql
+      dockerfile: mysql.dockerfile
+    container_name: api-creator-admin-mysql
     image: mysql:5.7
     restart: always
     volumes:
@@ -27,7 +27,7 @@ services:
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       MYSQL_ROOT_PASSWORD: rootPassword
-      MYSQL_DATABASE: api-creator
+      MYSQL_DATABASE: api-creator-admin
       MYSQL_USER:     user
       MYSQL_PASSWORD: password
       TZ: Asia/Tokyo
@@ -39,7 +39,7 @@ services:
       retries: 10
 
   pma: # phpMyAdmin container
-    container_name: api-creator-backend-pma
+    container_name: api-creator-admin-pma
     image: phpmyadmin/phpmyadmin:latest
     restart: always
     environment:
@@ -49,3 +49,29 @@ services:
       - 8080:80
     links:
       - mysql:db
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: api-creator-documents
+      TZ: Asia/Tokyo
+    volumes:
+      # - ./mongo/db:/data/db # DBを永続化する場合コメントアウト
+      - ./mongo/configdb:/data/configdb
+      - ./mongo/init/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example

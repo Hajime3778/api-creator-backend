@@ -2,10 +2,12 @@
   "cSpell.words": [
     "APIID",
     "Hajime",
+    "bson",
     "gojsonschema",
     "gonic",
     "gorm",
     "jinzhu",
+    "mongodb",
     "stretchr",
     "xeipuuv"
   ]
