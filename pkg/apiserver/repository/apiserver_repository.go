@@ -3,16 +3,19 @@ package repository
 import (
 	"errors"
 	"log"
+	"net/http"
 
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // APIServerRepository Interface
 type APIServerRepository interface {
-	Get(param string) error
+	Get(modelName string, param string) (interface{}, int, error)
 	GetList(param string) error
-	Create(body []byte) (string, error)
+	Create(modelName string, body []byte) (string, int, error)
 	Update() error
 	Delete() error
 }
@@ -29,8 +32,27 @@ func NewAPIServerRepository(db *database.DB) APIServerRepository {
 }
 
 // Get APIServerを1件取得します
-func (r *apiServerRepository) Get(param string) error {
-	return errors.New("not inprement")
+func (r *apiServerRepository) Get(modelName string, param string) (interface{}, int, error) {
+	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
+	defer cancel()
+
+	collection := mongoConn.Collection(modelName)
+
+	request := bson.M{
+		"id": param,
+	}
+	option := options.FindOne()
+	// _idを除外
+	option.SetProjection(bson.M{"_id": 0})
+
+	var response interface{}
+	err := collection.FindOne(ctx, request, option).Decode(&response)
+	if err == mongo.ErrNoDocuments {
+		return "", http.StatusNotFound, errors.New("record not found")
+	} else if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+	return response, http.StatusOK, nil
 }
 
 // GetList 複数のAPIServerを取得します
@@ -39,23 +61,23 @@ func (r *apiServerRepository) GetList(param string) error {
 }
 
 // Create APIServerを追加します
-func (r *apiServerRepository) Create(body []byte) (string, error) {
+func (r *apiServerRepository) Create(modelName string, body []byte) (string, int, error) {
 
 	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
 	defer cancel()
 
-	collection := mongoConn.Collection("test")
+	collection := mongoConn.Collection(modelName)
 
 	var b interface{}
 
 	err := bson.UnmarshalExtJSON(body, false, &b)
 	res, err := collection.InsertOne(ctx, &b)
 	if err != nil {
-		return "", err
+		return "", http.StatusInternalServerError, err
 	}
 	id := res.InsertedID
 	log.Println(id)
-	return "sample_id", errors.New("not inprement")
+	return "sample_id", http.StatusCreated, nil
 }
 
 // Update APIServerを更新します
