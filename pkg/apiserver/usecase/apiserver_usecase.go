@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"errors"
-	"fmt"
 	"log"
+	"net/http"
 	"regexp"
 	"strings"
 
@@ -15,9 +15,16 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
+var (
+	// ErrAPINotFound "api not found"
+	ErrAPINotFound = errors.New("api not found")
+	// ErrInvalidRequest "invalid request"
+	ErrInvalidRequest = errors.New("invalid request")
+)
+
 // APIServerUsecase Interface
 type APIServerUsecase interface {
-	RequestDocumentServer(httpMethod string, url string, body []byte) (domain.Method, string, error)
+	RequestDocumentServer(httpMethod string, url string, body []byte) (string, int, error)
 }
 
 type apiServerUsecase struct {
@@ -38,21 +45,24 @@ func NewAPIServerUsecase(apiRepo _apiRepository.APIRepository, methodRepo _metho
 }
 
 // RequestDocumentServer リクエスト情報からMethodを特定し、ドキュメントに対してCRUDします
-func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, body []byte) (domain.Method, string, error) {
+func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, body []byte) (string, int, error) {
 	api, err := u.apiRepo.GetByURL(url)
 	if err != nil {
-		return domain.Method{}, "", err
+		// APIが見つかりません
+		return "", http.StatusNotFound, err
 	}
 
 	// 対象のメソッドを取得
 	method, err := u.getRequestedMethod(httpMethod, url, api)
 
 	if err != nil {
-		return domain.Method{}, "", err
+		// APIが見つかりません
+		return "", http.StatusNotFound, ErrAPINotFound
 	}
 
 	if method.Type != httpMethod {
-		return domain.Method{}, "", err
+		// APIが見つかりません
+		return "", http.StatusNotFound, ErrAPINotFound
 	}
 
 	// リクエストされたパラメータを取得
@@ -65,21 +75,19 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
-		panic(err.Error())
+		// リクエストされたJsonの形式が違います
+		return "", http.StatusBadRequest, ErrInvalidRequest
 	}
 
-	if result.Valid() {
-		fmt.Printf("The document is valid\n")
-	} else {
-		fmt.Printf("The document is not valid. see errors :\n")
-		for _, desc := range result.Errors() {
-			fmt.Printf("- %s\n", desc)
-		}
-		panic(result.Errors())
-	}
+	if !result.Valid() {
+		// モデルの形式が違います
+		return "", http.StatusBadRequest, ErrInvalidRequest
 
-	if err != nil {
-		return domain.Method{}, "", err
+		// fmt.Printf("The document is not valid. see errors :\n")
+		// for _, desc := range result.Errors() {
+		// 	fmt.Printf("- %s\n", desc)
+		// }
+		// panic(result.Errors())
 	}
 
 	switch method.Type {
@@ -93,7 +101,7 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 		log.Println("DELETE")
 	}
 
-	return method, param, err
+	return param, http.StatusOK, err
 }
 
 // getRequestedMethod リクエストされたHTTPメソッド、URL、APIから、対象のMethodを返却します

@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/Hajime3778/api-creator-backend/pkg/apiserver/usecase"
 
 	"github.com/gin-gonic/gin"
@@ -29,17 +27,14 @@ func (h *APIServerHandler) RequestDocumentServer(c *gin.Context) {
 	url := c.Param("proxyPath")[1:]
 	body, _ := c.GetRawData()
 
-	method, param, err := h.usecase.RequestDocumentServer(httpMethod, url, body)
+	response, httpStatus, err := h.usecase.RequestDocumentServer(httpMethod, url, body)
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
+		c.JSON(httpStatus, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"param":  param,
-		"method": method,
-	})
+	c.JSON(httpStatus, response)
 }
