@@ -20,11 +20,13 @@ var (
 	ErrAPINotFound = errors.New("api not found")
 	// ErrInvalidRequest "invalid request"
 	ErrInvalidRequest = errors.New("invalid request")
+	// ErrModelNotDeclare "model not declare"
+	ErrModelNotDeclare = errors.New("model not declare")
 )
 
 // APIServerUsecase Interface
 type APIServerUsecase interface {
-	RequestDocumentServer(httpMethod string, url string, body []byte) (string, int, error)
+	RequestDocumentServer(httpMethod string, url string, body []byte) (interface{}, int, error)
 }
 
 type apiServerUsecase struct {
@@ -45,7 +47,7 @@ func NewAPIServerUsecase(apiRepo _apiRepository.APIRepository, methodRepo _metho
 }
 
 // RequestDocumentServer リクエスト情報からMethodを特定し、ドキュメントに対してCRUDします
-func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, body []byte) (string, int, error) {
+func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, body []byte) (interface{}, int, error) {
 	api, err := u.apiRepo.GetByURL(url)
 	if err != nil {
 		// APIが見つかりません
@@ -56,52 +58,39 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 	method, err := u.getRequestedMethod(httpMethod, url, api)
 
 	if err != nil {
-		// APIが見つかりません
 		return "", http.StatusNotFound, ErrAPINotFound
 	}
 
 	if method.Type != httpMethod {
-		// APIが見つかりません
 		return "", http.StatusNotFound, ErrAPINotFound
 	}
 
 	// リクエストされたパラメータを取得
 	param := getRequestedURLParameter(url, api.URL, method.URL)
-
 	model, err := u.modelRepo.GetByAPIID(api.ID)
-
-	schemaLoader := gojsonschema.NewStringLoader(model.Schema)
-	documentLoader := gojsonschema.NewStringLoader(string(body))
-
-	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
-		// リクエストされたJsonの形式が違います
-		return "", http.StatusBadRequest, ErrInvalidRequest
-	}
-
-	if !result.Valid() {
-		// モデルの形式が違います
-		return "", http.StatusBadRequest, ErrInvalidRequest
-
-		// fmt.Printf("The document is not valid. see errors :\n")
-		// for _, desc := range result.Errors() {
-		// 	fmt.Printf("- %s\n", desc)
-		// }
-		// panic(result.Errors())
+		return "", http.StatusBadRequest, ErrModelNotDeclare
 	}
 
 	switch method.Type {
 	case "GET":
-		log.Println("GET")
+		return u.apiserverRepo.Get(model.Name, param)
+		// log.Println("GET")
 	case "POST":
-		u.apiserverRepo.Create(body)
+		err := getRequestedSchemaValidate(model.Schema, body)
+		if err != nil {
+			return "", http.StatusBadRequest, err
+		}
+		return u.apiserverRepo.Create(model.Name, body)
 	case "PUT":
 		log.Println("PUT")
+		return "", http.StatusNotImplemented, errors.New("not implemented")
 	case "DELETE":
 		log.Println("DELETE")
+		return "", http.StatusNotImplemented, errors.New("not implemented")
+	default:
+		return "", http.StatusInternalServerError, errors.New("incorrect http method")
 	}
-
-	return param, http.StatusOK, err
 }
 
 // getRequestedMethod リクエストされたHTTPメソッド、URL、APIから、対象のMethodを返却します
@@ -181,4 +170,25 @@ func getRequestedURLParameter(requestedURL string, apiURL string, methodURL stri
 	}
 
 	return param
+}
+
+func getRequestedSchemaValidate(modelSchema string, requestBody []byte) error {
+
+	schemaLoader := gojsonschema.NewStringLoader(modelSchema)
+	documentLoader := gojsonschema.NewStringLoader(string(requestBody))
+
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		return ErrInvalidRequest
+	}
+
+	if !result.Valid() {
+		errMsg := ""
+		for _, desc := range result.Errors() {
+			errMsg = errMsg + desc.String()
+		}
+		return errors.New(errMsg)
+	}
+
+	return nil
 }
