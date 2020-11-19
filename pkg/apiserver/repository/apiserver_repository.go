@@ -1,16 +1,19 @@
 package repository
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // APIServerRepository Interface
 type APIServerRepository interface {
-	Get(modelName string, param string) (interface{}, int, error)
+	Get(modelName string, key string, param string) (interface{}, int, error)
 	GetList(param string) (interface{}, int, error)
 	Create(modelName string, body []byte) (interface{}, int, error)
 	Update() (interface{}, int, error)
@@ -29,30 +32,28 @@ func NewAPIServerRepository(db *database.DB) APIServerRepository {
 }
 
 // Get APIServerを1件取得します
-func (r *apiServerRepository) Get(modelName string, param string) (interface{}, int, error) {
-	// mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
-	// defer cancel()
+func (r *apiServerRepository) Get(modelName string, key string, param string) (interface{}, int, error) {
+	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
+	defer cancel()
 
-	// collection := mongoConn.Collection(modelName)
+	collection := mongoConn.Collection(modelName)
 
-	// request := bson.M{
-	// 	"id": param,
-	// }
-	// option := options.FindOne()
-	// // _idを除外
-	// option.SetProjection(bson.M{"_id": 0})
+	request := bson.M{
+		key: param,
+	}
+	option := options.FindOne()
+	// _idを除外
+	option.SetProjection(bson.M{"_id": 0})
 
-	// var response bson.M
-	// err := collection.FindOne(ctx, request, option).Decode(&response)
-	// if err == mongo.ErrNoDocuments {
-	// 	return "", http.StatusNotFound, errors.New("record not found")
-	// } else if err != nil {
-	// 	return "", http.StatusInternalServerError, err
-	// }
+	var response bson.M
+	err := collection.FindOne(ctx, request, option).Decode(&response)
+	if err == mongo.ErrNoDocuments {
+		return "", http.StatusNotFound, errors.New("record not found")
+	} else if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
 
-	// return response, http.StatusOK, nil
-
-	return "", http.StatusNotImplemented, nil
+	return response, http.StatusOK, nil
 }
 
 // GetList 複数のAPIServerを取得します
