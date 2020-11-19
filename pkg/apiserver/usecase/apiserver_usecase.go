@@ -66,7 +66,7 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 	}
 
 	// リクエストされたパラメータを取得
-	param := getRequestedURLParameter(url, api.URL, method.URL)
+	paramKey, paramValue := getRequestedURLParameter(url, api.URL, method.URL)
 	model, err := u.modelRepo.GetByAPIID(api.ID)
 	if err != nil {
 		return "", http.StatusBadRequest, ErrModelNotDeclare
@@ -74,7 +74,7 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 
 	switch method.Type {
 	case "GET":
-		return u.apiserverRepo.Get(model.Name, param)
+		return u.apiserverRepo.Get(model.Name, paramKey, paramValue)
 		// log.Println("GET")
 	case "POST":
 		err := getRequestedSchemaValidate(model.Schema, body)
@@ -153,23 +153,31 @@ func (u *apiServerUsecase) getRequestedMethod(httpMethod string, requestedURL st
 	return returnMethod, err
 }
 
-// getRequestedURLParameter リクエストされたURLパラメータを取得します
-func getRequestedURLParameter(requestedURL string, apiURL string, methodURL string) string {
+// getRequestedURLParameter リクエストされたURLパラメータとKeyを取得します
+func getRequestedURLParameter(requestedURL string, apiURL string, methodURL string) (string, string) {
+	key := ""
+	value := ""
+
 	if methodURL != "" {
-		// /{}で囲まれた箇所を削除
+		// {}で囲まれた中身のみ取得
 		re := regexp.MustCompile(`/\{.+?\}`)
+		key = re.FindString(methodURL)
+		key = strings.Replace(key, "/{", "", -1)
+		key = strings.Replace(key, "}", "", -1)
+
+		// /{}で囲まれた箇所を削除
 		methodURL = re.ReplaceAllString(methodURL, "")
 	}
 
 	// リクエストされたパラメータを取得
-	param := strings.Replace(requestedURL, apiURL+methodURL, "", 1)
+	value = strings.Replace(requestedURL, apiURL+methodURL, "", 1)
 
 	// 最初の/を削除する
-	if param != "" {
-		param = param[1:]
+	if value != "" {
+		value = value[1:]
 	}
 
-	return param
+	return key, value
 }
 
 func getRequestedSchemaValidate(modelSchema string, requestBody []byte) error {

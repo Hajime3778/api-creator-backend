@@ -13,7 +13,7 @@ import (
 
 // APIServerRepository Interface
 type APIServerRepository interface {
-	Get(modelName string, param string) (interface{}, int, error)
+	Get(modelName string, key string, param string) (interface{}, int, error)
 	GetList(param string) (interface{}, int, error)
 	Create(modelName string, body []byte) (interface{}, int, error)
 	Update() (interface{}, int, error)
@@ -32,14 +32,14 @@ func NewAPIServerRepository(db *database.DB) APIServerRepository {
 }
 
 // Get APIServerを1件取得します
-func (r *apiServerRepository) Get(modelName string, param string) (interface{}, int, error) {
+func (r *apiServerRepository) Get(modelName string, key string, param string) (interface{}, int, error) {
 	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
 	defer cancel()
 
 	collection := mongoConn.Collection(modelName)
 
 	request := bson.M{
-		"id": param,
+		key: param,
 	}
 	option := options.FindOne()
 	// _idを除外

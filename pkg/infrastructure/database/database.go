@@ -62,7 +62,7 @@ func (d *DB) NewMysqlConnection() *gorm.DB {
 // NewMongoDBConnection DBオブジェクトからMongoDBの接続を作成します
 func (d *DB) NewMongoDBConnection() (*mongo.Database, context.Context, context.CancelFunc) {
 	// MongoDBの接続情報を作成
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s",
 		d.Username,
 		d.Password,
