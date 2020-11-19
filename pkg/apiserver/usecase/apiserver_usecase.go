@@ -183,13 +183,11 @@ func getRequestedSchemaValidate(modelSchema string, requestBody []byte) error {
 	}
 
 	if !result.Valid() {
-		return ErrInvalidRequest
-
-		// fmt.Printf("The document is not valid. see errors :\n")
-		// for _, desc := range result.Errors() {
-		// 	fmt.Printf("- %s\n", desc)
-		// }
-		// panic(result.Errors())
+		errMsg := ""
+		for _, desc := range result.Errors() {
+			errMsg = errMsg + desc.String()
+		}
+		return errors.New(errMsg)
 	}
 
 	return nil

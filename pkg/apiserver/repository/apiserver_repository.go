@@ -1,23 +1,20 @@
 package repository
 
 import (
-	"errors"
 	"log"
 	"net/http"
 
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // APIServerRepository Interface
 type APIServerRepository interface {
 	Get(modelName string, param string) (interface{}, int, error)
-	GetList(param string) error
+	GetList(param string) (interface{}, int, error)
 	Create(modelName string, body []byte) (interface{}, int, error)
-	Update() error
-	Delete() error
+	Update() (interface{}, int, error)
+	Delete() (interface{}, int, error)
 }
 
 type apiServerRepository struct {
@@ -33,32 +30,34 @@ func NewAPIServerRepository(db *database.DB) APIServerRepository {
 
 // Get APIServerを1件取得します
 func (r *apiServerRepository) Get(modelName string, param string) (interface{}, int, error) {
-	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
-	defer cancel()
+	// mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
+	// defer cancel()
 
-	collection := mongoConn.Collection(modelName)
+	// collection := mongoConn.Collection(modelName)
 
-	request := bson.M{
-		"id": param,
-	}
-	option := options.FindOne()
-	// _idを除外
-	option.SetProjection(bson.M{"_id": 0})
+	// request := bson.M{
+	// 	"id": param,
+	// }
+	// option := options.FindOne()
+	// // _idを除外
+	// option.SetProjection(bson.M{"_id": 0})
 
-	var response bson.M
-	err := collection.FindOne(ctx, request, option).Decode(&response)
-	if err == mongo.ErrNoDocuments {
-		return "", http.StatusNotFound, errors.New("record not found")
-	} else if err != nil {
-		return "", http.StatusInternalServerError, err
-	}
+	// var response bson.M
+	// err := collection.FindOne(ctx, request, option).Decode(&response)
+	// if err == mongo.ErrNoDocuments {
+	// 	return "", http.StatusNotFound, errors.New("record not found")
+	// } else if err != nil {
+	// 	return "", http.StatusInternalServerError, err
+	// }
 
-	return response, http.StatusOK, nil
+	// return response, http.StatusOK, nil
+
+	return "", http.StatusNotImplemented, nil
 }
 
 // GetList 複数のAPIServerを取得します
-func (r *apiServerRepository) GetList(param string) error {
-	return errors.New("not inprement")
+func (r *apiServerRepository) GetList(param string) (interface{}, int, error) {
+	return "", http.StatusNotImplemented, nil
 }
 
 // Create APIServerを追加します
@@ -81,11 +80,11 @@ func (r *apiServerRepository) Create(modelName string, body []byte) (interface{}
 }
 
 // Update APIServerを更新します
-func (r *apiServerRepository) Update() error {
-	return errors.New("not inprement")
+func (r *apiServerRepository) Update() (interface{}, int, error) {
+	return "", http.StatusNotImplemented, nil
 }
 
 // Delete APIServerを削除します
-func (r *apiServerRepository) Delete() error {
-	return errors.New("not inprement")
+func (r *apiServerRepository) Delete() (interface{}, int, error) {
+	return "", http.StatusNotImplemented, nil
 }
