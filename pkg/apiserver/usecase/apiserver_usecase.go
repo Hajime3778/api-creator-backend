@@ -74,8 +74,11 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 
 	switch method.Type {
 	case "GET":
-		return u.apiserverRepo.Get(model.Name, paramKey, paramValue)
-		// log.Println("GET")
+		if method.IsArray {
+			return u.apiserverRepo.GetList(model.Name, paramKey, paramValue)
+		} else {
+			return u.apiserverRepo.Get(model.Name, paramKey, paramValue)
+		}
 	case "POST":
 		err := getRequestedSchemaValidate(model.Schema, body)
 		if err != nil {

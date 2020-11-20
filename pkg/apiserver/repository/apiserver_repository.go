@@ -14,7 +14,7 @@ import (
 // APIServerRepository Interface
 type APIServerRepository interface {
 	Get(modelName string, key string, param string) (interface{}, int, error)
-	GetList(param string) (interface{}, int, error)
+	GetList(modelName string, key string, param string) (interface{}, int, error)
 	Create(modelName string, body []byte) (interface{}, int, error)
 	Update() (interface{}, int, error)
 	Delete() (interface{}, int, error)
@@ -57,8 +57,38 @@ func (r *apiServerRepository) Get(modelName string, key string, param string) (i
 }
 
 // GetList 複数のAPIServerを取得します
-func (r *apiServerRepository) GetList(param string) (interface{}, int, error) {
-	return "", http.StatusNotImplemented, nil
+func (r *apiServerRepository) GetList(modelName string, key string, param string) (interface{}, int, error) {
+	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
+	defer cancel()
+
+	collection := mongoConn.Collection(modelName)
+
+	request := bson.D{}
+	if key != "" && param != "" {
+		request = bson.D{{Key: key, Value: param}}
+	}
+
+	option := options.Find()
+	// _idを除外
+	option.SetProjection(bson.D{{Key: "_id", Value: 0}})
+
+	var response []bson.M
+	cur, err := collection.Find(ctx, request, option)
+	if err == mongo.ErrNoDocuments {
+		return "", http.StatusNotFound, errors.New("record not found")
+	} else if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+
+	for cur.Next(ctx) {
+		var doc bson.M
+		if err = cur.Decode(&doc); err != nil {
+			return "", http.StatusInternalServerError, err
+		}
+		response = append(response, doc)
+	}
+
+	return response, http.StatusOK, nil
 }
 
 // Create APIServerを追加します
