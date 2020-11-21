@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
@@ -16,7 +15,7 @@ type APIServerRepository interface {
 	Get(modelName string, key string, param string) (interface{}, int, error)
 	GetList(modelName string, key string, param string) (interface{}, int, error)
 	Create(modelName string, body []byte) (interface{}, int, error)
-	Update() (interface{}, int, error)
+	Update(modelName string, body []byte) (interface{}, int, error)
 	Delete() (interface{}, int, error)
 }
 
@@ -104,17 +103,44 @@ func (r *apiServerRepository) Create(modelName string, body []byte) (interface{}
 	var b bson.M
 
 	err := bson.UnmarshalExtJSON(body, false, &b)
-	res, err := collection.InsertOne(ctx, &b)
+	_, err = collection.InsertOne(ctx, &b)
 	if err != nil {
 		return "", http.StatusInternalServerError, err
 	}
-	log.Println(res.InsertedID)
 	return b, http.StatusCreated, nil
 }
 
 // Update APIServerを更新します
-func (r *apiServerRepository) Update() (interface{}, int, error) {
-	return "", http.StatusNotImplemented, nil
+func (r *apiServerRepository) Update(modelName string, body []byte) (interface{}, int, error) {
+	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
+	defer cancel()
+
+	collection := mongoConn.Collection(modelName)
+
+	var requestBody bson.M
+	var updateModel bson.D
+
+	err := bson.UnmarshalExtJSON(body, false, &requestBody)
+	if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+
+	// TODO: UniqueKey設定できるようにする
+	id := requestBody["id"].(string)
+
+	err = bson.UnmarshalExtJSON(body, false, &updateModel)
+	if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+
+	filter := bson.D{{Key: "id", Value: id}}
+	update := bson.D{{Key: "$set", Value: updateModel}}
+
+	_, err = collection.UpdateOne(ctx, filter, &update)
+	if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+	return requestBody, http.StatusCreated, nil
 }
 
 // Delete APIServerを削除します
