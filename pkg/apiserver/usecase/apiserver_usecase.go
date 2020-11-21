@@ -86,8 +86,11 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 		}
 		return u.apiserverRepo.Create(model.Name, body)
 	case "PUT":
-		log.Println("PUT")
-		return "", http.StatusNotImplemented, errors.New("not implemented")
+		err := getRequestedSchemaValidate(model.Schema, body)
+		if err != nil {
+			return "", http.StatusBadRequest, err
+		}
+		return u.apiserverRepo.Update(model.Name, body)
 	case "DELETE":
 		log.Println("DELETE")
 		return "", http.StatusNotImplemented, errors.New("not implemented")
