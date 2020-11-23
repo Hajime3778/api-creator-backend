@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -92,8 +91,7 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 		}
 		return u.apiserverRepo.Update(model.Name, body)
 	case "DELETE":
-		log.Println("DELETE")
-		return "", http.StatusNotImplemented, errors.New("not implemented")
+		return u.apiserverRepo.Delete(model.Name, paramKey, paramValue)
 	default:
 		return "", http.StatusInternalServerError, errors.New("incorrect http method")
 	}
