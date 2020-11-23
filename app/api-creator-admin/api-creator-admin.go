@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/Hajime3778/api-creator-backend/cmd/logger"
-	"github.com/Hajime3778/api-creator-backend/cmd/server"
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/config"
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
+	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/logger"
+	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/server"
 	_ "github.com/go-sql-driver/mysql"
 )
 
