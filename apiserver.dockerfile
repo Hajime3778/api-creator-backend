@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN make build-admin
+RUN make build-apiserver
 
 FROM alpine:latest
 
@@ -17,8 +17,8 @@ RUN apk update && apk upgrade && \
 
 WORKDIR /app 
 
-EXPOSE 4000
+EXPOSE 9000
 
-COPY --from=builder /app/api-creator-admin /app
+COPY --from=builder /app/api-creator-apiserver /app
 
-CMD /app/api-creator-admin
+CMD /app/api-creator-apiserver
