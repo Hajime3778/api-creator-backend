@@ -154,7 +154,6 @@ func (r *apiServerRepository) Delete(modelName string, key string, param string)
 		key: param,
 	}
 
-	var response bson.M
 	_, err := collection.DeleteOne(ctx, request)
 	if err == mongo.ErrNoDocuments {
 		return "", http.StatusNotFound, errors.New("record not found")
@@ -162,5 +161,5 @@ func (r *apiServerRepository) Delete(modelName string, key string, param string)
 		return "", http.StatusInternalServerError, err
 	}
 
-	return response, http.StatusNoContent, nil
+	return "", http.StatusNoContent, nil
 }
