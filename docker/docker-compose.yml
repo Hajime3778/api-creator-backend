@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  web:
+  admin:
     build:
       context: ../
       dockerfile: admin.dockerfile
@@ -49,6 +49,20 @@ services:
       - 8080:80
     links:
       - mysql:db
+
+  api-server:
+    build:
+      context: ../
+      dockerfile: apiserver.dockerfile
+    container_name: api-creator-apiserver
+    ports:
+      - 9000:9000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ../admin.config.json:/app/admin.config.json
+      - ../apiserver.config.json:/app/apiserver.config.json
 
   mongo:
     image: mongo
