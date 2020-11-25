@@ -36,11 +36,11 @@ func main() {
 	// #endregion
 
 	// API Server側のMongoDB接続
-	apiserverCfg := config.NewConfig("../../apiserver.config.json")
+	apiserverCfg := config.NewConfig("./apiserver.config.json")
 	mongoDB := database.NewDB(apiserverCfg)
 
 	// 管理画面で設定されたMysql接続
-	mysqlCfg := config.NewConfig("../../admin.config.json")
+	mysqlCfg := config.NewConfig("./admin.config.json")
 	mysqlDB := database.NewDB(mysqlCfg)
 	mysqlConn := mysqlDB.NewMysqlConnection()
 
