@@ -4,7 +4,7 @@ API_SERVER=api-creator-apiserver
 test:
 	go test -v -cover -covermode=atomic ./...
 
-build:
+build-admin:
 	go build -o ${ADMIN} app/${ADMIN}/${ADMIN}.go
 
 build-apiserver:
