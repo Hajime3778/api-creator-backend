@@ -100,7 +100,7 @@ func TestCreate(t *testing.T) {
 		mockMethodRepo.On("Create", mockMethod).Return(nil).Once()
 		usecase := usecase.NewMethodUsecase(mockMethodRepo)
 
-		_, err := usecase.Create(mockMethod)
+		_, _, err := usecase.Create(mockMethod)
 
 		assert.NoError(t, err)
 
@@ -129,7 +129,7 @@ func TestUpdate(t *testing.T) {
 		mockMethodRepo.On("Update", mockMethod).Return(nil).Once()
 		usecase := usecase.NewMethodUsecase(mockMethodRepo)
 
-		err := usecase.Update(mockMethod)
+		_, err := usecase.Update(mockMethod)
 
 		assert.NoError(t, err)
 
