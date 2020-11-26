@@ -93,9 +93,9 @@ func (h *MethodHandler) Create(c *gin.Context) {
 	var method domain.Method
 	c.BindJSON(&method)
 
-	id, err := h.usecase.Create(method)
+	status, id, err := h.usecase.Create(method)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(status, err)
 		log.Println(err)
 		return
 	}
@@ -107,13 +107,13 @@ func (h *MethodHandler) Update(c *gin.Context) {
 	var method domain.Method
 	c.BindJSON(&method)
 
-	err := h.usecase.Update(method)
+	status, err := h.usecase.Update(method)
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			c.JSON(http.StatusNotFound, err.Error())
 		} else {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(status, err.Error())
 		}
 		log.Println(err)
 		return
