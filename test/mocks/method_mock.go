@@ -74,7 +74,7 @@ func (_m *MethodRepository) GetListByAPIID(apiID string) ([]domain.Method, error
 
 // GetListByAPIIDAndType is mock function
 func (_m *MethodRepository) GetListByAPIIDAndType(apiID string, methodType string) ([]domain.Method, error) {
-	ret := _m.Called()
+	ret := _m.Called(apiID, methodType)
 	return ret.Get(0).([]domain.Method), ret.Error(1)
 }
 
