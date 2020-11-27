@@ -95,8 +95,8 @@ func (h *MethodHandler) Create(c *gin.Context) {
 
 	status, id, err := h.usecase.Create(method)
 	if err != nil {
-		c.JSON(status, err)
-		log.Println(err)
+		c.JSON(status, map[string]string{"error": err.Error()})
+		log.Println(err.Error())
 		return
 	}
 	c.JSON(http.StatusCreated, domain.CreatedResponse{ID: id})

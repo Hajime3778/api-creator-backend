@@ -123,7 +123,7 @@ func (u *methodUsecase) validateMethodURL(method domain.Method) error {
 
 		//スラッシュの数とパラメータの数が同じメソッドがすでに存在する場合
 		if methodParamCount == newMethodParamCount {
-			return errors.New("同じURLのメソッドがすでに存在しています。URLを修正してください" + "\n同じURLのメソッド：" + method.URL)
+			return errors.New("同じHTTPメソッド、URLのメソッドがすでに存在しています。" + "\n同じURLのメソッド：" + method.URL)
 		}
 	}
 	return nil
