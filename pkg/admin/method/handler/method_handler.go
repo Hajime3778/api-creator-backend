@@ -39,11 +39,11 @@ func (h *MethodHandler) GetAll(c *gin.Context) {
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, err.Error())
+			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
 		} else {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		}
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 
@@ -58,11 +58,11 @@ func (h *MethodHandler) GetByID(c *gin.Context) {
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, err.Error())
+			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
 		} else {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		}
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 
@@ -81,7 +81,7 @@ func (h *MethodHandler) GetListByAPIID(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, err.Error())
 		}
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 
@@ -95,7 +95,7 @@ func (h *MethodHandler) Create(c *gin.Context) {
 
 	status, id, err := h.usecase.Create(method)
 	if err != nil {
-		c.JSON(status, map[string]string{"error": err.Error()})
+		c.JSON(status, domain.ErrorResponse{Error: err.Error()})
 		log.Println(err.Error())
 		return
 	}
@@ -111,11 +111,11 @@ func (h *MethodHandler) Update(c *gin.Context) {
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, err.Error())
+			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
 		} else {
-			c.JSON(status, err.Error())
+			c.JSON(status, domain.ErrorResponse{Error: err.Error()})
 		}
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 
@@ -129,11 +129,11 @@ func (h *MethodHandler) Delete(c *gin.Context) {
 	err := h.usecase.Delete(id)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, err.Error())
+			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
 		} else {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		}
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 

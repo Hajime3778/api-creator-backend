@@ -37,11 +37,11 @@ func (h *APIHandler) GetAll(c *gin.Context) {
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, err.Error())
+			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
 		} else {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		}
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 
@@ -56,11 +56,11 @@ func (h *APIHandler) GetByID(c *gin.Context) {
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, err.Error())
+			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
 		} else {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		}
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 
@@ -74,8 +74,8 @@ func (h *APIHandler) Create(c *gin.Context) {
 
 	id, err := h.usecase.Create(api)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-		log.Println(err)
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
+		log.Println(err.Error())
 		return
 	}
 	c.JSON(http.StatusCreated, domain.CreatedResponse{ID: id})
@@ -90,11 +90,11 @@ func (h *APIHandler) Update(c *gin.Context) {
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, err.Error())
+			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
 		} else {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		}
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 
@@ -108,11 +108,11 @@ func (h *APIHandler) Delete(c *gin.Context) {
 	err := h.usecase.Delete(id)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, err.Error())
+			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
 		} else {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		}
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 
