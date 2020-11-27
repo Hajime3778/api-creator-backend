@@ -87,7 +87,7 @@ func TestCreate(t *testing.T) {
 	mockMethod.ID = methodId.String()
 	mockMethod.APIID = apiId.String()
 	mockMethod.Type = "GET"
-	mockMethod.URL = "url"
+	mockMethod.URL = "/url"
 	mockMethod.Description = "test"
 	mockMethod.RequestParameter = ""
 	mockMethod.RequestModelID = ""
@@ -98,13 +98,25 @@ func TestCreate(t *testing.T) {
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("Create", mockMethod).Return(nil).Once()
+		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
 		usecase := usecase.NewMethodUsecase(mockMethodRepo)
 
-		_, err := usecase.Create(mockMethod)
+		_, _, err := usecase.Create(mockMethod)
 
 		assert.NoError(t, err)
 
 		mockMethodRepo.AssertExpectations(t)
+	})
+
+	t.Run("test2", func(t *testing.T) {
+		mockMethod.URL = "url"
+		mockMethodRepo.On("Create", mockMethod).Return(nil).Once()
+		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
+		usecase := usecase.NewMethodUsecase(mockMethodRepo)
+
+		_, err := usecase.Update(mockMethod)
+
+		assert.Error(t, err)
 	})
 }
 
@@ -116,7 +128,7 @@ func TestUpdate(t *testing.T) {
 	mockMethod.ID = methodId.String()
 	mockMethod.APIID = apiId.String()
 	mockMethod.Type = "GET"
-	mockMethod.URL = "url"
+	mockMethod.URL = "/url"
 	mockMethod.Description = "test"
 	mockMethod.RequestParameter = ""
 	mockMethod.RequestModelID = ""
@@ -127,13 +139,25 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("Update", mockMethod).Return(nil).Once()
+		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
 		usecase := usecase.NewMethodUsecase(mockMethodRepo)
 
-		err := usecase.Update(mockMethod)
+		_, err := usecase.Update(mockMethod)
 
 		assert.NoError(t, err)
 
 		mockMethodRepo.AssertExpectations(t)
+	})
+
+	t.Run("test2", func(t *testing.T) {
+		mockMethod.URL = "url"
+		mockMethodRepo.On("Update", mockMethod).Return(nil).Once()
+		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
+		usecase := usecase.NewMethodUsecase(mockMethodRepo)
+
+		_, err := usecase.Update(mockMethod)
+
+		assert.Error(t, err)
 	})
 }
 

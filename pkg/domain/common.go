@@ -12,3 +12,8 @@ type CommonColumn struct {
 type CreatedResponse struct {
 	ID string `json:"id"`
 }
+
+// ErrorResponse エラー時の返却値
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
