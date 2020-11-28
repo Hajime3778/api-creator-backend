@@ -113,6 +113,7 @@ func (u *methodUsecase) validateMethodURL(method domain.Method) error {
 		}
 	}
 	newMethodParamCount := len(paramNames)
+	newMethodSlushCount := strings.Count(newMethod.URL, "/")
 
 	for _, method := range methods {
 		// 同じメソッドの場合はスルー
@@ -120,10 +121,12 @@ func (u *methodUsecase) validateMethodURL(method domain.Method) error {
 			continue
 		}
 		methodParamCount := len(re.FindAllStringSubmatch(method.URL, -1))
+		methodSlushCount := strings.Count(method.URL, "/")
 
 		//スラッシュの数とパラメータの数が同じメソッドがすでに存在する場合
-		if methodParamCount == newMethodParamCount {
-			return errors.New("同じHTTPメソッド、URLのメソッドがすでに存在しています。" + "\n同じURLのメソッド：" + method.URL)
+		if methodParamCount == newMethodParamCount &&
+			methodSlushCount == newMethodSlushCount {
+			return errors.New("同じHTTPメソッド、URLのメソッドがすでに存在しています。" + "\n：" + method.URL)
 		}
 	}
 	return nil
