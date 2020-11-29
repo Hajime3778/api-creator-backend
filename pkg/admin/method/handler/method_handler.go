@@ -26,6 +26,7 @@ func NewMethodHandler(r *gin.RouterGroup, u usecase.MethodUsecase) {
 		methodRoutes.GET("", handler.GetAll)
 		methodRoutes.GET("/:id", handler.GetByID)
 		methodRoutes.POST("", handler.Create)
+		methodRoutes.POST("/:api_id", handler.CreateDefaultMethod)
 		methodRoutes.PUT("", handler.Update)
 		methodRoutes.DELETE("/:id", handler.Delete)
 	}
@@ -100,6 +101,19 @@ func (h *MethodHandler) Create(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, domain.CreatedResponse{ID: id})
+}
+
+// CreateDefaultMethod デフォルトのCRUDMethodを作成します
+func (h *MethodHandler) CreateDefaultMethod(c *gin.Context) {
+	apiID := c.Param("api_id")
+
+	status, err := h.usecase.CreateDefaultMethods(apiID)
+	if err != nil {
+		c.JSON(status, domain.ErrorResponse{Error: err.Error()})
+		log.Println(err.Error())
+		return
+	}
+	c.JSON(http.StatusCreated, nil)
 }
 
 // Update Methodを更新します

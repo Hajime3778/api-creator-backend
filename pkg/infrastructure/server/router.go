@@ -42,7 +42,7 @@ func (s *Server) SetUpRouter() *gin.Engine {
 
 	// Methods
 	methodRepository := _methodRepository.NewMethodRepository(conn)
-	methodUsecase := _methodUsecase.NewMethodUsecase(methodRepository)
+	methodUsecase := _methodUsecase.NewMethodUsecase(apiRepository, methodRepository)
 	_methodHandler.NewMethodHandler(apiV1, methodUsecase)
 
 	// Models

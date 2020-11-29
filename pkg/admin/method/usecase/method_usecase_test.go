@@ -32,11 +32,12 @@ func TestGetAll(t *testing.T) {
 	mockMethods = append(mockMethods, mockMethod)
 
 	// モック
+	mockAPIRepo := new(mocks.APIRepository)
 	mockMethodRepo := new(mocks.MethodRepository)
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("GetAll").Return(mockMethods, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo)
 
 		methods, err := usecase.GetAll()
 
@@ -64,11 +65,12 @@ func TestGetByID(t *testing.T) {
 	mockMethod.CreatedAt = time.Now()
 	mockMethod.UpdatedAt = time.Now()
 
+	mockAPIRepo := new(mocks.APIRepository)
 	mockMethodRepo := new(mocks.MethodRepository)
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("GetByID", mockMethod.ID).Return(mockMethod, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo)
 
 		method, err := usecase.GetByID(mockMethod.ID)
 
@@ -94,12 +96,13 @@ func TestCreate(t *testing.T) {
 	mockMethod.ResponseModelID = ""
 	mockMethod.IsArray = false
 
+	mockAPIRepo := new(mocks.APIRepository)
 	mockMethodRepo := new(mocks.MethodRepository)
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("Create", mockMethod).Return(nil).Once()
 		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo)
 
 		_, _, err := usecase.Create(mockMethod)
 
@@ -112,7 +115,7 @@ func TestCreate(t *testing.T) {
 		mockMethod.URL = "url"
 		mockMethodRepo.On("Create", mockMethod).Return(nil).Once()
 		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo)
 
 		_, err := usecase.Update(mockMethod)
 
@@ -135,12 +138,13 @@ func TestUpdate(t *testing.T) {
 	mockMethod.ResponseModelID = ""
 	mockMethod.IsArray = false
 
+	mockAPIRepo := new(mocks.APIRepository)
 	mockMethodRepo := new(mocks.MethodRepository)
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("Update", mockMethod).Return(nil).Once()
 		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo)
 
 		_, err := usecase.Update(mockMethod)
 
@@ -153,7 +157,7 @@ func TestUpdate(t *testing.T) {
 		mockMethod.URL = "url"
 		mockMethodRepo.On("Update", mockMethod).Return(nil).Once()
 		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo)
 
 		_, err := usecase.Update(mockMethod)
 
@@ -176,11 +180,12 @@ func TestDelete(t *testing.T) {
 	mockMethod.ResponseModelID = ""
 	mockMethod.IsArray = false
 
+	mockAPIRepo := new(mocks.APIRepository)
 	mockMethodRepo := new(mocks.MethodRepository)
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("Delete", mockMethod.ID).Return(nil).Once()
-		usecase := usecase.NewMethodUsecase(mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo)
 
 		err := usecase.Delete(mockMethod.ID)
 

@@ -14,27 +14,6 @@ import (
 )
 
 func main() {
-
-	// #region MongoDBテスト用のコード
-	// logger.LoggingSetting("./log/")
-	// apiserverConfig := config.NewConfig("../../apiserver.config.json")
-	// db := database.NewDB(apiserverConfig)
-	// mongoConn, ctx, cancel := db.NewMongoDBConnection()
-	// defer cancel()
-	//
-	// apiserverRepository := _apiserverRepository.NewAPIServerRepository(ctx, mongoConn)
-	//
-	// collection := conn.Collection("test")
-	// res, err := collection.InsertOne(ctx, bson.M{"name": "foo", "value": 123})
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// 	return
-	// }
-	// id := res.InsertedID
-	//
-	// log.Println(id)
-	// #endregion
-
 	// API Server側のMongoDB接続
 	apiserverCfg := config.NewConfig("./apiserver.config.json")
 	mongoDB := database.NewDB(apiserverCfg)

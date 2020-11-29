@@ -2,11 +2,13 @@ package usecase
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"regexp"
 	"strings"
 
-	"github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
+	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
+	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/google/uuid"
 )
@@ -17,18 +19,21 @@ type MethodUsecase interface {
 	GetByID(id string) (domain.Method, error)
 	GetListByAPIID(apiID string) ([]domain.Method, error)
 	Create(method domain.Method) (int, string, error)
+	CreateDefaultMethods(apiID string) (int, error)
 	Update(method domain.Method) (int, error)
 	Delete(id string) error
 }
 
 type methodUsecase struct {
-	repo repository.MethodRepository
+	apiRepo _apiRepository.APIRepository
+	repo    _methodRepository.MethodRepository
 }
 
 // NewMethodUsecase MethodUsecaseインターフェイスを表すオブジェクトを作成します
-func NewMethodUsecase(repo repository.MethodRepository) MethodUsecase {
+func NewMethodUsecase(apiRepo _apiRepository.APIRepository, repo _methodRepository.MethodRepository) MethodUsecase {
 	return &methodUsecase{
-		repo: repo,
+		apiRepo: apiRepo,
+		repo:    repo,
 	}
 }
 
@@ -62,6 +67,14 @@ func (u *methodUsecase) Create(method domain.Method) (int, string, error) {
 		return http.StatusInternalServerError, "", err
 	}
 	return http.StatusCreated, id, nil
+}
+
+// Create Methodを作成します
+func (u *methodUsecase) CreateDefaultMethods(apiID string) (int, error) {
+	api, err := u.apiRepo.GetByID(apiID)
+	log.Println(api)
+	log.Println(err)
+	return http.StatusNotImplemented, nil
 }
 
 // Update Methodを更新します。
