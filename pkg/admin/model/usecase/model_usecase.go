@@ -1,6 +1,9 @@
 package usecase
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/google/uuid"
@@ -67,6 +70,17 @@ func (u *modelUsecase) Update(model domain.Model) error {
 	err := sl.AddSchemas(gojsonschema.NewStringLoader(model.Schema))
 	if err != nil {
 		return err
+	}
+
+	var jsonMap map[string]interface{}
+	err = json.Unmarshal([]byte(model.Schema), &jsonMap)
+	if err != nil {
+		return err
+	}
+	keys := jsonMap["keys"].([]interface{})
+	fmt.Println(keys)
+	for _, key := range keys {
+		fmt.Println(key.(string))
 	}
 	return u.repo.Update(model)
 }
