@@ -72,9 +72,9 @@ func (h *APIHandler) Create(c *gin.Context) {
 	var api domain.API
 	c.BindJSON(&api)
 
-	id, err := h.usecase.Create(api)
+	status, id, err := h.usecase.Create(api)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
+		c.JSON(status, domain.ErrorResponse{Error: err.Error()})
 		log.Println(err.Error())
 		return
 	}
@@ -86,14 +86,10 @@ func (h *APIHandler) Update(c *gin.Context) {
 	var api domain.API
 	c.BindJSON(&api)
 
-	err := h.usecase.Update(api)
+	status, err := h.usecase.Update(api)
 
 	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
-		} else {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
-		}
+		c.JSON(status, domain.ErrorResponse{Error: err.Error()})
 		log.Println(err.Error())
 		return
 	}

@@ -93,9 +93,9 @@ func (h *ModelHandler) Create(c *gin.Context) {
 	var model domain.Model
 	c.BindJSON(&model)
 
-	id, err := h.usecase.Create(model)
+	status, id, err := h.usecase.Create(model)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
+		c.JSON(status, domain.ErrorResponse{Error: err.Error()})
 		log.Println(err.Error())
 		return
 	}
@@ -107,14 +107,10 @@ func (h *ModelHandler) Update(c *gin.Context) {
 	var model domain.Model
 	c.BindJSON(&model)
 
-	err := h.usecase.Update(model)
+	status, err := h.usecase.Update(model)
 
 	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
-		} else {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
-		}
+		c.JSON(status, domain.ErrorResponse{Error: err.Error()})
 		log.Println(err.Error())
 		return
 	}

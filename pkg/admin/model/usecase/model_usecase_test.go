@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"net/http"
 	"testing"
 	"time"
 
@@ -72,7 +73,7 @@ func TestCreate(t *testing.T) {
 	mockModel.ID = modelId.String()
 	mockModel.Name = "name"
 	mockModel.Description = "description"
-	mockModel.Schema = "schema"
+	mockModel.Schema = "{\"type\": \"object\", \"keys\": [\"id\"], \"properties\": {\"id\": {\"type\":\"string\"}}}"
 
 	mockModelRepo := new(mocks.ModelRepository)
 
@@ -80,9 +81,10 @@ func TestCreate(t *testing.T) {
 		mockModelRepo.On("Create", mockModel).Return(nil).Once()
 		usecase := usecase.NewModelUsecase(mockModelRepo)
 
-		_, err := usecase.Create(mockModel)
+		status, _, err := usecase.Create(mockModel)
 
 		assert.NoError(t, err)
+		assert.Equal(t, status, http.StatusCreated)
 
 		mockModelRepo.AssertExpectations(t)
 	})
@@ -95,7 +97,7 @@ func TestUpdate(t *testing.T) {
 	mockModel.ID = modelId.String()
 	mockModel.Name = "name"
 	mockModel.Description = "description"
-	mockModel.Schema = "schema"
+	mockModel.Schema = "{\"type\": \"object\", \"keys\": [\"id\"], \"properties\": {\"id\": {\"type\":\"string\"}}}"
 
 	mockModelRepo := new(mocks.ModelRepository)
 
@@ -103,9 +105,10 @@ func TestUpdate(t *testing.T) {
 		mockModelRepo.On("Update", mockModel).Return(nil).Once()
 		usecase := usecase.NewModelUsecase(mockModelRepo)
 
-		err := usecase.Update(mockModel)
+		status, err := usecase.Update(mockModel)
 
 		assert.NoError(t, err)
+		assert.Equal(t, status, http.StatusOK)
 
 		mockModelRepo.AssertExpectations(t)
 	})

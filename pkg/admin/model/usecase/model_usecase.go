@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"net/http"
+
 	"github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/google/uuid"
@@ -11,8 +13,8 @@ type ModelUsecase interface {
 	GetAll() ([]domain.Model, error)
 	GetByID(id string) (domain.Model, error)
 	GetByAPIID(apiID string) (domain.Model, error)
-	Create(model domain.Model) (string, error)
-	Update(model domain.Model) error
+	Create(model domain.Model) (int, string, error)
+	Update(model domain.Model) (int, error)
 	Delete(id string) error
 }
 
@@ -43,7 +45,7 @@ func (u *modelUsecase) GetByAPIID(apiID string) (domain.Model, error) {
 }
 
 // Create Modelを作成します
-func (u *modelUsecase) Create(model domain.Model) (string, error) {
+func (u *modelUsecase) Create(model domain.Model) (int, string, error) {
 	if model.ID == "" {
 		id, _ := uuid.NewRandom()
 		model.ID = id.String()
@@ -51,21 +53,31 @@ func (u *modelUsecase) Create(model domain.Model) (string, error) {
 	// JsonSchemaが正しい形式か検証
 	err := model.ValidateSchema()
 	if err != nil {
-		return "", err
+		return http.StatusBadRequest, "", err
 	}
 
-	return u.repo.Create(model)
+	id, err := u.repo.Create(model)
+	if err != nil {
+		return http.StatusInternalServerError, "", err
+	}
+
+	return http.StatusCreated, id, nil
 }
 
 // Update Modelを更新します。
-func (u *modelUsecase) Update(model domain.Model) error {
+func (u *modelUsecase) Update(model domain.Model) (int, error) {
 	// JsonSchemaが正しい形式か検証
 	err := model.ValidateSchema()
 	if err != nil {
-		return err
+		return http.StatusBadRequest, err
 	}
 
-	return u.repo.Update(model)
+	err = u.repo.Update(model)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return http.StatusOK, nil
 }
 
 // Delete Modelを削除します
