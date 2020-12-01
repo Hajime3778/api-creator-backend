@@ -27,7 +27,7 @@ func (m *Model) ValidateSchema() error {
 	}
 
 	_, err = m.GetKeyNames()
-	if err == nil {
+	if err != nil {
 		return err
 	}
 
