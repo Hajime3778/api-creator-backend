@@ -1,13 +1,9 @@
 package usecase
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/google/uuid"
-	"github.com/xeipuuv/gojsonschema"
 )
 
 // ModelUsecase Interface
@@ -53,35 +49,22 @@ func (u *modelUsecase) Create(model domain.Model) (string, error) {
 		model.ID = id.String()
 	}
 	// JsonSchemaが正しい形式か検証
-	sl := gojsonschema.NewSchemaLoader()
-	sl.Validate = true
-	err := sl.AddSchemas(gojsonschema.NewStringLoader(model.Schema))
+	err := model.ValidateSchema()
 	if err != nil {
 		return "", err
 	}
+
 	return u.repo.Create(model)
 }
 
 // Update Modelを更新します。
 func (u *modelUsecase) Update(model domain.Model) error {
-	/// JsonSchemaが正しい形式か検証
-	sl := gojsonschema.NewSchemaLoader()
-	sl.Validate = true
-	err := sl.AddSchemas(gojsonschema.NewStringLoader(model.Schema))
+	// JsonSchemaが正しい形式か検証
+	err := model.ValidateSchema()
 	if err != nil {
 		return err
 	}
 
-	var jsonMap map[string]interface{}
-	err = json.Unmarshal([]byte(model.Schema), &jsonMap)
-	if err != nil {
-		return err
-	}
-	keys := jsonMap["keys"].([]interface{})
-	fmt.Println(keys)
-	for _, key := range keys {
-		fmt.Println(key.(string))
-	}
 	return u.repo.Update(model)
 }
 
