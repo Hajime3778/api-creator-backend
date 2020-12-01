@@ -88,6 +88,49 @@ func TestCreate(t *testing.T) {
 
 		mockModelRepo.AssertExpectations(t)
 	})
+	t.Run("jsonschema形式でない", func(t *testing.T) {
+		mockModelRepo.On("Create", mockModel).Return(nil).Once()
+		usecase := usecase.NewModelUsecase(mockModelRepo)
+
+		mockModel.Schema = "test"
+
+		status, _, err := usecase.Create(mockModel)
+
+		assert.Error(t, err)
+		assert.Equal(t, status, http.StatusBadRequest)
+	})
+	t.Run("keysがnil", func(t *testing.T) {
+		mockModelRepo.On("Create", mockModel).Return(nil).Once()
+		usecase := usecase.NewModelUsecase(mockModelRepo)
+
+		mockModel.Schema = "{\"type\": \"object\", \"properties\": {\"id\": {\"type\":\"string\"}}}"
+
+		status, _, err := usecase.Create(mockModel)
+
+		assert.Error(t, err)
+		assert.Equal(t, status, http.StatusBadRequest)
+	})
+	t.Run("keysにpropertyが指定されていない", func(t *testing.T) {
+		mockModelRepo.On("Create", mockModel).Return(nil).Once()
+		usecase := usecase.NewModelUsecase(mockModelRepo)
+
+		mockModel.Schema = "{\"type\": \"object\", \"keys\": [], \"properties\": {\"id\": {\"type\":\"string\"}}}"
+
+		status, _, err := usecase.Create(mockModel)
+
+		assert.Error(t, err)
+		assert.Equal(t, status, http.StatusBadRequest)
+	})
+	t.Run("存在しないプロパティをkeysで指定している", func(t *testing.T) {
+		mockModel.Schema = "{\"type\": \"object\", \"keys\": [\"id\", \"foo\"], \"properties\": {\"id\": {\"type\":\"string\"}}}"
+		mockModelRepo.On("Create", mockModel).Return(nil).Once()
+		usecase := usecase.NewModelUsecase(mockModelRepo)
+
+		status, _, err := usecase.Create(mockModel)
+
+		assert.Error(t, err)
+		assert.Equal(t, status, http.StatusBadRequest)
+	})
 }
 
 func TestUpdate(t *testing.T) {
@@ -111,6 +154,49 @@ func TestUpdate(t *testing.T) {
 		assert.Equal(t, status, http.StatusOK)
 
 		mockModelRepo.AssertExpectations(t)
+	})
+	t.Run("jsonschema形式でない", func(t *testing.T) {
+		mockModelRepo.On("Create", mockModel).Return(nil).Once()
+		usecase := usecase.NewModelUsecase(mockModelRepo)
+
+		mockModel.Schema = "test"
+
+		status, err := usecase.Update(mockModel)
+
+		assert.Error(t, err)
+		assert.Equal(t, status, http.StatusBadRequest)
+	})
+	t.Run("keysがnil", func(t *testing.T) {
+		mockModelRepo.On("Create", mockModel).Return(nil).Once()
+		usecase := usecase.NewModelUsecase(mockModelRepo)
+
+		mockModel.Schema = "{\"type\": \"object\", \"properties\": {\"id\": {\"type\":\"string\"}}}"
+
+		status, err := usecase.Update(mockModel)
+
+		assert.Error(t, err)
+		assert.Equal(t, status, http.StatusBadRequest)
+	})
+	t.Run("keysにpropertyが指定されていない", func(t *testing.T) {
+		mockModelRepo.On("Create", mockModel).Return(nil).Once()
+		usecase := usecase.NewModelUsecase(mockModelRepo)
+
+		mockModel.Schema = "{\"type\": \"object\", \"keys\": [], \"properties\": {\"id\": {\"type\":\"string\"}}}"
+
+		status, err := usecase.Update(mockModel)
+
+		assert.Error(t, err)
+		assert.Equal(t, status, http.StatusBadRequest)
+	})
+	t.Run("存在しないプロパティをkeysで指定している", func(t *testing.T) {
+		mockModel.Schema = "{\"type\": \"object\", \"keys\": [\"id\", \"foo\"], \"properties\": {\"id\": {\"type\":\"string\"}}}"
+		mockModelRepo.On("Create", mockModel).Return(nil).Once()
+		usecase := usecase.NewModelUsecase(mockModelRepo)
+
+		status, err := usecase.Update(mockModel)
+
+		assert.Error(t, err)
+		assert.Equal(t, status, http.StatusBadRequest)
 	})
 }
 

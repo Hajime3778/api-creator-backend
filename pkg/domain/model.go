@@ -43,10 +43,13 @@ func (m *Model) GetKeyNames() ([]string, error) {
 		return nil, err
 	}
 
-	keys := jsonMap["keys"].([]interface{})
+	if jsonMap["keys"] == nil {
+		return nil, errors.New("keysが指定されていません")
+	}
 
-	if keys == nil {
-		return keyNames, nil
+	keys := jsonMap["keys"].([]interface{})
+	if len(keys) == 0 {
+		return nil, errors.New("keysが指定されていません")
 	}
 
 	properties := jsonMap["properties"].(map[string]interface{})
@@ -65,7 +68,7 @@ func (m *Model) GetKeyNames() ([]string, error) {
 	}
 
 	if missingPropertyName != "" {
-		return nil, errors.New("存在しない項目" + missingPropertyName + "がkeysに指定されています")
+		return nil, errors.New("存在しない項目 [" + missingPropertyName + "] がkeysに指定されています")
 	}
 
 	// TODO: 複数キー指定は今は対応しない
