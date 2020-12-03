@@ -1,6 +1,8 @@
 package mocks
 
 import (
+	"net/http"
+
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 
 	"github.com/stretchr/testify/mock"
@@ -30,15 +32,15 @@ func (_m *ModelUsecase) GetByAPIID(id string) (domain.Model, error) {
 }
 
 // Create is mock function
-func (_m *ModelUsecase) Create(model domain.Model) (string, error) {
+func (_m *ModelUsecase) Create(model domain.Model) (int, string, error) {
 	ret := _m.Called(model)
-	return model.ID, ret.Error(0)
+	return http.StatusCreated, model.ID, ret.Error(0)
 }
 
 // Update is mock function
-func (_m *ModelUsecase) Update(model domain.Model) error {
+func (_m *ModelUsecase) Update(model domain.Model) (int, error) {
 	ret := _m.Called(model)
-	return ret.Error(0)
+	return http.StatusOK, ret.Error(0)
 }
 
 // Delete is mock function

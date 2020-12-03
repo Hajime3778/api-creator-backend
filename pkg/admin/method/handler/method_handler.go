@@ -31,6 +31,7 @@ func NewMethodHandler(r *gin.RouterGroup, u usecase.MethodUsecase) {
 	}
 	// apiに紐づいたmethodのルート(ルーティングまとめる箇所の検討余地あり)
 	r.GET("/apis/:id/methods", handler.GetListByAPIID)
+	r.POST("/apis/:id/create-default-methods", handler.CreateDefaultMethod)
 }
 
 // GetAll 複数のMethodを取得します
@@ -100,6 +101,19 @@ func (h *MethodHandler) Create(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, domain.CreatedResponse{ID: id})
+}
+
+// CreateDefaultMethod デフォルトのCRUDMethodを作成します
+func (h *MethodHandler) CreateDefaultMethod(c *gin.Context) {
+	apiID := c.Param("id")
+
+	status, methods, err := h.usecase.CreateDefaultMethods(apiID)
+	if err != nil {
+		c.JSON(status, domain.ErrorResponse{Error: err.Error()})
+		log.Println(err.Error())
+		return
+	}
+	c.JSON(http.StatusCreated, methods)
 }
 
 // Update Methodを更新します

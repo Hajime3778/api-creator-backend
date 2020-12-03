@@ -40,15 +40,15 @@ func (s *Server) SetUpRouter() *gin.Engine {
 	apiUsecase := _apiUsecase.NewAPIUsecase(apiRepository)
 	_apiHandler.NewAPIHandler(apiV1, apiUsecase)
 
-	// Methods
-	methodRepository := _methodRepository.NewMethodRepository(conn)
-	methodUsecase := _methodUsecase.NewMethodUsecase(methodRepository)
-	_methodHandler.NewMethodHandler(apiV1, methodUsecase)
-
 	// Models
 	modelRepository := _modelRepository.NewModelRepository(conn)
 	modelUsecase := _modelUsecase.NewModelUsecase(modelRepository)
 	_modelHandler.NewModelHandler(apiV1, modelUsecase)
+
+	// Methods
+	methodRepository := _methodRepository.NewMethodRepository(conn)
+	methodUsecase := _methodUsecase.NewMethodUsecase(apiRepository, modelRepository, methodRepository)
+	_methodHandler.NewMethodHandler(apiV1, methodUsecase)
 
 	return s.router
 }

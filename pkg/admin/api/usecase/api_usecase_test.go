@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"net/http"
 	"testing"
 	"time"
 
@@ -83,9 +84,10 @@ func TestCreate(t *testing.T) {
 		mockAPIRepo.On("Create", mockAPI).Return(nil).Once()
 		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		_, err := usecase.Create(mockAPI)
+		status, _, err := usecase.Create(mockAPI)
 
 		assert.NoError(t, err)
+		assert.Equal(t, status, http.StatusCreated)
 
 		mockAPIRepo.AssertExpectations(t)
 	})
@@ -107,9 +109,10 @@ func TestUpdate(t *testing.T) {
 		mockAPIRepo.On("Update", mockAPI).Return(nil).Once()
 		usecase := usecase.NewAPIUsecase(mockAPIRepo)
 
-		err := usecase.Update(mockAPI)
+		status, err := usecase.Update(mockAPI)
 
 		assert.NoError(t, err)
+		assert.Equal(t, status, http.StatusOK)
 
 		mockAPIRepo.AssertExpectations(t)
 	})

@@ -6,9 +6,12 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
+	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
+	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
+	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
 
 // MethodUsecase Interface
@@ -17,18 +20,23 @@ type MethodUsecase interface {
 	GetByID(id string) (domain.Method, error)
 	GetListByAPIID(apiID string) ([]domain.Method, error)
 	Create(method domain.Method) (int, string, error)
+	CreateDefaultMethods(apiID string) (int, []domain.Method, error)
 	Update(method domain.Method) (int, error)
 	Delete(id string) error
 }
 
 type methodUsecase struct {
-	repo repository.MethodRepository
+	apiRepo   _apiRepository.APIRepository
+	modelRepo _modelRepository.ModelRepository
+	repo      _methodRepository.MethodRepository
 }
 
 // NewMethodUsecase MethodUsecaseインターフェイスを表すオブジェクトを作成します
-func NewMethodUsecase(repo repository.MethodRepository) MethodUsecase {
+func NewMethodUsecase(apiRepo _apiRepository.APIRepository, modelRepo _modelRepository.ModelRepository, repo _methodRepository.MethodRepository) MethodUsecase {
 	return &methodUsecase{
-		repo: repo,
+		apiRepo:   apiRepo,
+		modelRepo: modelRepo,
+		repo:      repo,
 	}
 }
 
@@ -62,6 +70,77 @@ func (u *methodUsecase) Create(method domain.Method) (int, string, error) {
 		return http.StatusInternalServerError, "", err
 	}
 	return http.StatusCreated, id, nil
+}
+
+// CreateDefaultMethods デフォルトのCRUDMethodを作成します
+func (u *methodUsecase) CreateDefaultMethods(apiID string) (int, []domain.Method, error) {
+	_, err := u.apiRepo.GetByID(apiID)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, nil, err
+		}
+		return http.StatusInternalServerError, nil, err
+	}
+
+	model, err := u.modelRepo.GetByAPIID(apiID)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, nil, err
+		}
+		return http.StatusInternalServerError, nil, err
+	}
+
+	keys, err := model.GetKeyNames()
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	var methods []domain.Method
+	for i := 0; i < 5; i++ {
+		id, _ := uuid.NewRandom()
+		initMethod := domain.Method{
+			ID:      id.String(),
+			APIID:   apiID,
+			IsArray: false,
+		}
+		methods = append(methods, initMethod)
+	}
+	// getAll メソッド作成
+	methods[0].Type = "GET"
+	methods[0].Description = "すべての" + model.Name + "を取得します。"
+	methods[0].IsArray = true
+
+	// getOne メソッド作成
+	methods[1].Type = "GET"
+	methods[1].Description = keys[0] + "から1件の" + model.Name + "を取得します。"
+	methods[1].URL = "/{" + keys[0] + "}"
+
+	// create メソッド作成
+	methods[2].Type = "POST"
+	methods[2].Description = model.Name + "を1件作成します。"
+
+	// update メソッド作成
+	methods[3].Type = "PUT"
+	methods[3].Description = model.Name + "を1件更新します。"
+
+	// delete メソッド作成
+	methods[4].Type = "DELETE"
+	methods[4].Description = model.Name + "を1件削除します。"
+	methods[4].URL = "/{" + keys[0] + "}"
+
+	for _, method := range methods {
+		_, err := u.repo.Create(method)
+		if err != nil {
+			return http.StatusInternalServerError, nil, err
+		}
+	}
+
+	createdMethods, err := u.repo.GetListByAPIID(apiID)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusCreated, createdMethods, nil
 }
 
 // Update Methodを更新します。
