@@ -2,15 +2,16 @@ package usecase
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"regexp"
 	"strings"
 
 	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
 	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
+	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
 
 // MethodUsecase Interface
@@ -25,15 +26,17 @@ type MethodUsecase interface {
 }
 
 type methodUsecase struct {
-	apiRepo _apiRepository.APIRepository
-	repo    _methodRepository.MethodRepository
+	apiRepo   _apiRepository.APIRepository
+	modelRepo _modelRepository.ModelRepository
+	repo      _methodRepository.MethodRepository
 }
 
 // NewMethodUsecase MethodUsecaseインターフェイスを表すオブジェクトを作成します
-func NewMethodUsecase(apiRepo _apiRepository.APIRepository, repo _methodRepository.MethodRepository) MethodUsecase {
+func NewMethodUsecase(apiRepo _apiRepository.APIRepository, modelRepo _modelRepository.ModelRepository, repo _methodRepository.MethodRepository) MethodUsecase {
 	return &methodUsecase{
-		apiRepo: apiRepo,
-		repo:    repo,
+		apiRepo:   apiRepo,
+		modelRepo: modelRepo,
+		repo:      repo,
 	}
 }
 
@@ -71,9 +74,25 @@ func (u *methodUsecase) Create(method domain.Method) (int, string, error) {
 
 // Create Methodを作成します
 func (u *methodUsecase) CreateDefaultMethods(apiID string) (int, error) {
-	api, err := u.apiRepo.GetByID(apiID)
-	log.Println(api)
-	log.Println(err)
+	_, err := u.apiRepo.GetByID(apiID)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, err
+		}
+	}
+
+	var methods []domain.Method
+	for i := 0; i < 4; i++ {
+		id, _ := uuid.NewRandom()
+		initMethod := domain.Method{
+			ID:    id.String(),
+			APIID: apiID,
+		}
+		methods = append(methods, initMethod)
+	}
+	// getAll メソッド作成
+	methods[0].Type = "GET"
+	methods[0].IsArray = true
 	return http.StatusNotImplemented, nil
 }
 
