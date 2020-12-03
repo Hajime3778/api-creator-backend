@@ -20,7 +20,7 @@ type MethodUsecase interface {
 	GetByID(id string) (domain.Method, error)
 	GetListByAPIID(apiID string) ([]domain.Method, error)
 	Create(method domain.Method) (int, string, error)
-	CreateDefaultMethods(apiID string) (int, error)
+	CreateDefaultMethods(apiID string) (int, []domain.Method, error)
 	Update(method domain.Method) (int, error)
 	Delete(id string) error
 }
@@ -73,26 +73,26 @@ func (u *methodUsecase) Create(method domain.Method) (int, string, error) {
 }
 
 // CreateDefaultMethods デフォルトのCRUDMethodを作成します
-func (u *methodUsecase) CreateDefaultMethods(apiID string) (int, error) {
+func (u *methodUsecase) CreateDefaultMethods(apiID string) (int, []domain.Method, error) {
 	_, err := u.apiRepo.GetByID(apiID)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return http.StatusNotFound, err
+			return http.StatusNotFound, nil, err
 		}
-		return http.StatusInternalServerError, err
+		return http.StatusInternalServerError, nil, err
 	}
 
 	model, err := u.modelRepo.GetByAPIID(apiID)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return http.StatusNotFound, err
+			return http.StatusNotFound, nil, err
 		}
-		return http.StatusInternalServerError, err
+		return http.StatusInternalServerError, nil, err
 	}
 
 	keys, err := model.GetKeyNames()
 	if err != nil {
-		return http.StatusInternalServerError, err
+		return http.StatusInternalServerError, nil, err
 	}
 
 	var methods []domain.Method
@@ -131,11 +131,16 @@ func (u *methodUsecase) CreateDefaultMethods(apiID string) (int, error) {
 	for _, method := range methods {
 		_, err := u.repo.Create(method)
 		if err != nil {
-			return http.StatusInternalServerError, err
+			return http.StatusInternalServerError, nil, err
 		}
 	}
 
-	return http.StatusCreated, nil
+	createdMethods, err := u.repo.GetListByAPIID(apiID)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusCreated, createdMethods, nil
 }
 
 // Update Methodを更新します。

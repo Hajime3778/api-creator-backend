@@ -105,15 +105,15 @@ func (h *MethodHandler) Create(c *gin.Context) {
 
 // CreateDefaultMethod デフォルトのCRUDMethodを作成します
 func (h *MethodHandler) CreateDefaultMethod(c *gin.Context) {
-	apiID := c.Param("api_id")
+	apiID := c.Param("id")
 
-	status, err := h.usecase.CreateDefaultMethods(apiID)
+	status, methods, err := h.usecase.CreateDefaultMethods(apiID)
 	if err != nil {
 		c.JSON(status, domain.ErrorResponse{Error: err.Error()})
 		log.Println(err.Error())
 		return
 	}
-	c.JSON(http.StatusCreated, nil)
+	c.JSON(http.StatusCreated, methods)
 }
 
 // Update Methodを更新します

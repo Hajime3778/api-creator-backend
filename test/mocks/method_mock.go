@@ -38,9 +38,9 @@ func (_m *MethodUsecase) Create(method domain.Method) (int, string, error) {
 }
 
 // CreateDefaultMethods is mock function
-func (_m *MethodUsecase) CreateDefaultMethods(apiID string) (int, error) {
+func (_m *MethodUsecase) CreateDefaultMethods(apiID string) (int, []domain.Method, error) {
 	ret := _m.Called(apiID)
-	return http.StatusCreated, ret.Error(0)
+	return http.StatusCreated, ret.Get(0).([]domain.Method), ret.Error(1)
 }
 
 // Update is mock function
