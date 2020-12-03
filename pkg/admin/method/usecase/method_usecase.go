@@ -72,28 +72,70 @@ func (u *methodUsecase) Create(method domain.Method) (int, string, error) {
 	return http.StatusCreated, id, nil
 }
 
-// Create Methodを作成します
+// CreateDefaultMethods デフォルトのCRUDMethodを作成します
 func (u *methodUsecase) CreateDefaultMethods(apiID string) (int, error) {
 	_, err := u.apiRepo.GetByID(apiID)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return http.StatusNotFound, err
 		}
+		return http.StatusInternalServerError, err
+	}
+
+	model, err := u.modelRepo.GetByAPIID(apiID)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, err
+		}
+		return http.StatusInternalServerError, err
+	}
+
+	keys, err := model.GetKeyNames()
+	if err != nil {
+		return http.StatusInternalServerError, err
 	}
 
 	var methods []domain.Method
-	for i := 0; i < 4; i++ {
+	for i := 0; i < 5; i++ {
 		id, _ := uuid.NewRandom()
 		initMethod := domain.Method{
-			ID:    id.String(),
-			APIID: apiID,
+			ID:      id.String(),
+			APIID:   apiID,
+			IsArray: false,
 		}
 		methods = append(methods, initMethod)
 	}
 	// getAll メソッド作成
 	methods[0].Type = "GET"
+	methods[0].Description = "すべての" + model.Name + "を取得します。"
 	methods[0].IsArray = true
-	return http.StatusNotImplemented, nil
+
+	// getOne メソッド作成
+	methods[1].Type = "GET"
+	methods[1].Description = keys[0] + "から1件の" + model.Name + "を取得します。"
+	methods[1].URL = "/{" + keys[0] + "}"
+
+	// create メソッド作成
+	methods[2].Type = "POST"
+	methods[2].Description = model.Name + "を1件作成します。"
+
+	// update メソッド作成
+	methods[3].Type = "PUT"
+	methods[3].Description = model.Name + "を1件更新します。"
+
+	// delete メソッド作成
+	methods[4].Type = "DELETE"
+	methods[4].Description = model.Name + "を1件削除します。"
+	methods[4].URL = "/{" + keys[0] + "}"
+
+	for _, method := range methods {
+		_, err := u.repo.Create(method)
+		if err != nil {
+			return http.StatusInternalServerError, err
+		}
+	}
+
+	return http.StatusCreated, nil
 }
 
 // Update Methodを更新します。

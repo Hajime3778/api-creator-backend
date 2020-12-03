@@ -26,12 +26,12 @@ func NewMethodHandler(r *gin.RouterGroup, u usecase.MethodUsecase) {
 		methodRoutes.GET("", handler.GetAll)
 		methodRoutes.GET("/:id", handler.GetByID)
 		methodRoutes.POST("", handler.Create)
-		methodRoutes.POST("/:api_id", handler.CreateDefaultMethod)
 		methodRoutes.PUT("", handler.Update)
 		methodRoutes.DELETE("/:id", handler.Delete)
 	}
 	// apiに紐づいたmethodのルート(ルーティングまとめる箇所の検討余地あり)
 	r.GET("/apis/:id/methods", handler.GetListByAPIID)
+	r.POST("/apis/:id/create-default-methods", handler.CreateDefaultMethod)
 }
 
 // GetAll 複数のMethodを取得します
