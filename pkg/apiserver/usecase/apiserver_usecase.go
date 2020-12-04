@@ -52,6 +52,16 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 		// APIが見つかりません
 		return "", http.StatusNotFound, err
 	}
+	model, err := u.modelRepo.GetByAPIID(api.ID)
+	if err != nil {
+		return "", http.StatusBadRequest, ErrModelNotDeclare
+	}
+
+	// コレクションを削除する、システム規定のメソッド
+	pathParam := strings.Replace(url, api.URL+"/", "", 1)
+	if pathParam == "remove-target-collection" && httpMethod == "DELETE" {
+		return u.apiserverRepo.RemoveCollection(model.Name)
+	}
 
 	// 対象のメソッドを取得
 	method, err := u.getRequestedMethod(httpMethod, url, api)
@@ -66,18 +76,14 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 
 	// リクエストされたパラメータを取得
 	paramKey, paramValue := getRequestedURLParameter(url, api.URL, method.URL)
-	model, err := u.modelRepo.GetByAPIID(api.ID)
-	if err != nil {
-		return "", http.StatusBadRequest, ErrModelNotDeclare
-	}
 
 	switch method.Type {
 	case "GET":
 		if method.IsArray {
 			return u.apiserverRepo.GetList(model.Name, paramKey, paramValue)
-		} else {
-			return u.apiserverRepo.Get(model.Name, paramKey, paramValue)
 		}
+		return u.apiserverRepo.Get(model.Name, paramKey, paramValue)
+
 	case "POST":
 		err := getRequestedSchemaValidate(model.Schema, body)
 		if err != nil {
