@@ -80,20 +80,20 @@ func (r *apiRepository) Delete(id string, methods []domain.Method, model domain.
 	api.ID = id
 
 	r.db.Transaction(func(tx *gorm.DB) error {
-		// for _, m := range methods {
-		// 	method := domain.Method{ID: m.ID}
-		// 	if err := tx.Delete(&method).Error; err != nil {
-		// 		return err
-		// 	}
-		// }
-		// if err := tx.Delete(&model).Error; err != nil {
-		// 	return err
-		// }
-		// if err := tx.Delete(&api).Error; err != nil {
-		// 	return err
-		// }
+		for _, m := range methods {
+			method := domain.Method{ID: m.ID}
+			if err := tx.Delete(&method).Error; err != nil {
+				return err
+			}
+		}
+		if err := tx.Delete(&model).Error; err != nil {
+			return err
+		}
+		if err := tx.Delete(&api).Error; err != nil {
+			return err
+		}
 		// localで実行する場合 removeCollectionRequest("http://localhost:9000/" + model.Name)
-		if err := removeCollectionRequest("http://api-server/" + model.Name); err != nil {
+		if err := removeCollectionRequest("http://api-creator-apiserver/" + model.Name); err != nil {
 			return err
 		}
 		return nil
