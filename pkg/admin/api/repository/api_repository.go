@@ -13,7 +13,7 @@ type APIRepository interface {
 	GetByURL(url string) (domain.API, error)
 	Create(api domain.API) (string, error)
 	Update(api domain.API) error
-	Delete(id string) error
+	Delete(id string, methods []domain.Method, model domain.Model) error
 }
 
 type apiRepository struct {
@@ -70,16 +70,25 @@ func (r *apiRepository) Update(api domain.API) error {
 	return r.db.Save(&api).Error
 }
 
-// Delete APIを削除します
-func (r *apiRepository) Delete(id string) error {
+// Delete APIを削除します(関連するメソッド、モデルも含めて)
+func (r *apiRepository) Delete(id string, methods []domain.Method, model domain.Model) error {
 	api := domain.API{}
-
 	api.ID = id
-	result := r.db.Delete(&api)
 
-	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
-	}
-
-	return result.Error
+	r.db.Transaction(func(tx *gorm.DB) error {
+		for _, m := range methods {
+			method := domain.Method{ID: m.ID}
+			if err := tx.Delete(&method).Error; err != nil {
+				return err
+			}
+		}
+		if err := tx.Delete(&model).Error; err != nil {
+			return err
+		}
+		if err := tx.Delete(&api).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+	return nil
 }

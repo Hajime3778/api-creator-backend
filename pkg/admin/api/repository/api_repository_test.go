@@ -126,6 +126,12 @@ func TestUpdate(t *testing.T) {
 func TestDelete(t *testing.T) {
 	mock, db := setUpMockDB()
 	apiId, _ := uuid.NewRandom()
+	methodId, _ := uuid.NewRandom()
+	modelId, _ := uuid.NewRandom()
+
+	var methods []domain.Method
+	methods = append(methods, domain.Method{ID: methodId.String()})
+	model := domain.Model{ID: modelId.String()}
 
 	mock.ExpectBegin()
 	query := regexp.QuoteMeta("DELETE FROM `apis` WHERE `apis`.`id` = ?")
@@ -134,6 +140,6 @@ func TestDelete(t *testing.T) {
 
 	apiRepository := repository.NewAPIRepository(db)
 
-	err := apiRepository.Delete(apiId.String())
+	err := apiRepository.Delete(apiId.String(), methods, model)
 	assert.NoError(t, err)
 }

@@ -3,9 +3,12 @@ package usecase
 import (
 	"net/http"
 
-	"github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
+	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
+	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
+	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
 
 // APIUsecase Interface
@@ -14,28 +17,32 @@ type APIUsecase interface {
 	GetByID(id string) (domain.API, error)
 	Create(api domain.API) (int, string, error)
 	Update(api domain.API) (int, error)
-	Delete(id string) error
+	Delete(id string) (int, error)
 }
 
 type apiUsecase struct {
-	repo repository.APIRepository
+	apiRepo    _apiRepository.APIRepository
+	methodRepo _methodRepository.MethodRepository
+	modelRepo  _modelRepository.ModelRepository
 }
 
 // NewAPIUsecase APIUsecaseインターフェイスを表すオブジェクトを作成します
-func NewAPIUsecase(repo repository.APIRepository) APIUsecase {
+func NewAPIUsecase(apiRepo _apiRepository.APIRepository, methodRepo _methodRepository.MethodRepository, modelRepo _modelRepository.ModelRepository) APIUsecase {
 	return &apiUsecase{
-		repo: repo,
+		apiRepo:    apiRepo,
+		methodRepo: methodRepo,
+		modelRepo:  modelRepo,
 	}
 }
 
 // GetAll 複数のAPIを取得します
 func (u *apiUsecase) GetAll() ([]domain.API, error) {
-	return u.repo.GetAll()
+	return u.apiRepo.GetAll()
 }
 
 // GetByID APIを1件取得します
 func (u *apiUsecase) GetByID(id string) (domain.API, error) {
-	return u.repo.GetByID(id)
+	return u.apiRepo.GetByID(id)
 }
 
 // Create APIを作成します
@@ -44,7 +51,7 @@ func (u *apiUsecase) Create(api domain.API) (int, string, error) {
 		id, _ := uuid.NewRandom()
 		api.ID = id.String()
 	}
-	id, err := u.repo.Create(api)
+	id, err := u.apiRepo.Create(api)
 	if err != nil {
 		return http.StatusInternalServerError, "", nil
 	}
@@ -53,14 +60,35 @@ func (u *apiUsecase) Create(api domain.API) (int, string, error) {
 
 // Update APIを更新します
 func (u *apiUsecase) Update(api domain.API) (int, error) {
-	err := u.repo.Update(api)
+	err := u.apiRepo.Update(api)
 	if err != nil {
 		return http.StatusInternalServerError, nil
 	}
 	return http.StatusOK, nil
 }
 
-// Delete APIを削除します
-func (u *apiUsecase) Delete(id string) error {
-	return u.repo.Delete(id)
+// Delete APIを削除します(関連するメソッド、モデルも含めて)
+func (u *apiUsecase) Delete(id string) (int, error) {
+	if _, err := u.apiRepo.GetByID(id); err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return http.StatusNotFound, err
+		}
+		return http.StatusInternalServerError, err
+	}
+
+	methods, err := u.methodRepo.GetListByAPIID(id)
+	if err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return http.StatusInternalServerError, err
+		}
+	}
+
+	model, err := u.modelRepo.GetByAPIID(id)
+	if err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return http.StatusInternalServerError, err
+		}
+	}
+
+	return http.StatusNoContent, u.apiRepo.Delete(id, methods, model)
 }

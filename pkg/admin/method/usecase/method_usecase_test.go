@@ -38,7 +38,7 @@ func TestGetAll(t *testing.T) {
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("GetAll").Return(mockMethods, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockModelRepo, mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		methods, err := usecase.GetAll()
 
@@ -72,7 +72,7 @@ func TestGetByID(t *testing.T) {
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("GetByID", mockMethod.ID).Return(mockMethod, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockModelRepo, mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		method, err := usecase.GetByID(mockMethod.ID)
 
@@ -105,7 +105,7 @@ func TestCreate(t *testing.T) {
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("Create", mockMethod).Return(nil).Once()
 		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockModelRepo, mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		_, _, err := usecase.Create(mockMethod)
 
@@ -118,7 +118,7 @@ func TestCreate(t *testing.T) {
 		mockMethod.URL = "url"
 		mockMethodRepo.On("Create", mockMethod).Return(nil).Once()
 		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockModelRepo, mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		_, err := usecase.Update(mockMethod)
 
@@ -148,7 +148,7 @@ func TestUpdate(t *testing.T) {
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("Update", mockMethod).Return(nil).Once()
 		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockModelRepo, mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		_, err := usecase.Update(mockMethod)
 
@@ -161,7 +161,7 @@ func TestUpdate(t *testing.T) {
 		mockMethod.URL = "url"
 		mockMethodRepo.On("Update", mockMethod).Return(nil).Once()
 		mockMethodRepo.On("GetListByAPIIDAndType", mockMethod.APIID, mockMethod.Type).Return([]domain.Method{}, nil).Once()
-		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockModelRepo, mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		_, err := usecase.Update(mockMethod)
 
@@ -190,7 +190,7 @@ func TestDelete(t *testing.T) {
 
 	t.Run("test1", func(t *testing.T) {
 		mockMethodRepo.On("Delete", mockMethod.ID).Return(nil).Once()
-		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockModelRepo, mockMethodRepo)
+		usecase := usecase.NewMethodUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		err := usecase.Delete(mockMethod.ID)
 
