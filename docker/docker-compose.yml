@@ -4,7 +4,7 @@ services:
   admin:
     build:
       context: ../
-      dockerfile: admin.dockerfile
+      dockerfile: ./app/api-creator-admin/admin.dockerfile
     container_name: api-creator-admin
     ports:
       - 4000:4000
@@ -53,7 +53,7 @@ services:
   api-server:
     build:
       context: ../
-      dockerfile: apiserver.dockerfile
+      dockerfile: ./app/api-creator-apiserver/apiserver.dockerfile
     container_name: api-creator-apiserver
     ports:
       - 9000:9000

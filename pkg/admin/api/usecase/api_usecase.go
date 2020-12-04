@@ -90,5 +90,10 @@ func (u *apiUsecase) Delete(id string) (int, error) {
 		}
 	}
 
-	return http.StatusNoContent, u.apiRepo.Delete(id, methods, model)
+	err = u.apiRepo.Delete(id, methods, model)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return http.StatusNoContent, nil
 }

@@ -1,6 +1,10 @@
 package repository
 
 import (
+	"io/ioutil"
+	"log"
+	"net/http"
+
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 
 	"github.com/jinzhu/gorm"
@@ -88,7 +92,29 @@ func (r *apiRepository) Delete(id string, methods []domain.Method, model domain.
 		if err := tx.Delete(&api).Error; err != nil {
 			return err
 		}
+		// localで実行する場合 removeCollectionRequest("http://api-server/" + model.Name)
+		if err := removeCollectionRequest("http://api-server/" + model.Name); err != nil {
+			return err
+		}
 		return nil
 	})
+	return nil
+}
+
+func removeCollectionRequest(url string) error {
+	request, err := http.NewRequest("DELETE", url+"/remove-target-collection", nil)
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	log.Println(string(b))
 	return nil
 }
