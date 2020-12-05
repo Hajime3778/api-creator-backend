@@ -38,9 +38,9 @@ func (_m *APIUsecase) Update(api domain.API) (int, error) {
 }
 
 // Delete is mock function
-func (_m *APIUsecase) Delete(id string) error {
+func (_m *APIUsecase) Delete(id string) (int, error) {
 	ret := _m.Called(id)
-	return ret.Error(0)
+	return http.StatusNoContent, ret.Error(0)
 }
 
 // APIRepository is mock
@@ -79,7 +79,7 @@ func (_m *APIRepository) Update(api domain.API) error {
 }
 
 // Delete is mock function
-func (_m *APIRepository) Delete(id string) error {
+func (_m *APIRepository) Delete(id string, methods []domain.Method, model domain.Model) error {
 	ret := _m.Called(id)
 	return ret.Error(0)
 }

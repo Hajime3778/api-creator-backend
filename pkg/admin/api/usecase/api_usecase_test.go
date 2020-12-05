@@ -28,10 +28,12 @@ func TestGetAll(t *testing.T) {
 
 	// モック
 	mockAPIRepo := new(mocks.APIRepository)
+	mockMethodRepo := new(mocks.MethodRepository)
+	mockModelRepo := new(mocks.ModelRepository)
 
 	t.Run("test1", func(t *testing.T) {
 		mockAPIRepo.On("GetAll").Return(mockAPIs, nil).Once()
-		usecase := usecase.NewAPIUsecase(mockAPIRepo)
+		usecase := usecase.NewAPIUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		apis, err := usecase.GetAll()
 
@@ -54,11 +56,14 @@ func TestGetByID(t *testing.T) {
 	mockAPI.CreatedAt = time.Now()
 	mockAPI.UpdatedAt = time.Now()
 
+	// モック
 	mockAPIRepo := new(mocks.APIRepository)
+	mockMethodRepo := new(mocks.MethodRepository)
+	mockModelRepo := new(mocks.ModelRepository)
 
 	t.Run("test1", func(t *testing.T) {
 		mockAPIRepo.On("GetByID", mockAPI.ID).Return(mockAPI, nil).Once()
-		usecase := usecase.NewAPIUsecase(mockAPIRepo)
+		usecase := usecase.NewAPIUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		api, err := usecase.GetByID(mockAPI.ID)
 
@@ -78,11 +83,14 @@ func TestCreate(t *testing.T) {
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
 
+	// モック
 	mockAPIRepo := new(mocks.APIRepository)
+	mockMethodRepo := new(mocks.MethodRepository)
+	mockModelRepo := new(mocks.ModelRepository)
 
 	t.Run("test1", func(t *testing.T) {
 		mockAPIRepo.On("Create", mockAPI).Return(nil).Once()
-		usecase := usecase.NewAPIUsecase(mockAPIRepo)
+		usecase := usecase.NewAPIUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		status, _, err := usecase.Create(mockAPI)
 
@@ -104,10 +112,12 @@ func TestUpdate(t *testing.T) {
 
 	// モック
 	mockAPIRepo := new(mocks.APIRepository)
+	mockMethodRepo := new(mocks.MethodRepository)
+	mockModelRepo := new(mocks.ModelRepository)
 
 	t.Run("test1", func(t *testing.T) {
 		mockAPIRepo.On("Update", mockAPI).Return(nil).Once()
-		usecase := usecase.NewAPIUsecase(mockAPIRepo)
+		usecase := usecase.NewAPIUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
 		status, err := usecase.Update(mockAPI)
 
@@ -127,15 +137,22 @@ func TestDelete(t *testing.T) {
 	mockAPI.URL = "url"
 	mockAPI.Description = "test"
 
+	// モック
 	mockAPIRepo := new(mocks.APIRepository)
+	mockMethodRepo := new(mocks.MethodRepository)
+	mockModelRepo := new(mocks.ModelRepository)
 
 	t.Run("test1", func(t *testing.T) {
-		mockAPIRepo.On("Delete", mockAPI.ID).Return(nil).Once()
-		usecase := usecase.NewAPIUsecase(mockAPIRepo)
+		mockAPIRepo.On("GetByID", apiId.String()).Return(mockAPI, nil).Once()
+		mockMethodRepo.On("GetListByAPIID", apiId.String()).Return([]domain.Method{}, nil).Once()
+		mockModelRepo.On("GetByAPIID", apiId.String()).Return(domain.Model{}, nil).Once()
+		mockAPIRepo.On("Delete", apiId.String()).Return(nil).Once()
+		usecase := usecase.NewAPIUsecase(mockAPIRepo, mockMethodRepo, mockModelRepo)
 
-		err := usecase.Delete(mockAPI.ID)
+		status, err := usecase.Delete(apiId.String())
 
 		assert.NoError(t, err)
+		assert.Equal(t, status, http.StatusNoContent)
 
 		mockAPIRepo.AssertExpectations(t)
 	})

@@ -1,8 +1,11 @@
 package repository
 
 import (
-	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"io/ioutil"
+	"log"
+	"net/http"
 
+	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/jinzhu/gorm"
 )
 
@@ -13,17 +16,19 @@ type APIRepository interface {
 	GetByURL(url string) (domain.API, error)
 	Create(api domain.API) (string, error)
 	Update(api domain.API) error
-	Delete(id string) error
+	Delete(id string, methods []domain.Method, model domain.Model) error
 }
 
 type apiRepository struct {
-	db *gorm.DB
+	db               *gorm.DB
+	apiServerBaseURL string
 }
 
 // NewAPIRepository APIRepositoryインターフェイスを表すオブジェクトを作成します
-func NewAPIRepository(db *gorm.DB) APIRepository {
+func NewAPIRepository(db *gorm.DB, apiServerBaseURL string) APIRepository {
 	return &apiRepository{
-		db: db,
+		db:               db,
+		apiServerBaseURL: apiServerBaseURL,
 	}
 }
 
@@ -70,16 +75,47 @@ func (r *apiRepository) Update(api domain.API) error {
 	return r.db.Save(&api).Error
 }
 
-// Delete APIを削除します
-func (r *apiRepository) Delete(id string) error {
+// Delete APIを削除します(関連するメソッド、モデルも含めて)
+func (r *apiRepository) Delete(id string, methods []domain.Method, model domain.Model) error {
 	api := domain.API{}
-
 	api.ID = id
-	result := r.db.Delete(&api)
 
-	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
+	r.db.Transaction(func(tx *gorm.DB) error {
+		for _, m := range methods {
+			method := domain.Method{ID: m.ID}
+			if err := tx.Delete(&method).Error; err != nil {
+				return err
+			}
+		}
+		if err := tx.Delete(&model).Error; err != nil {
+			return err
+		}
+		if err := tx.Delete(&api).Error; err != nil {
+			return err
+		}
+		// localで実行する場合 removeCollectionRequest("http://localhost:9000/" + model.Name)
+		if err := removeCollectionRequest(r.apiServerBaseURL + model.Name); err != nil {
+			return err
+		}
+		return nil
+	})
+	return nil
+}
+
+func removeCollectionRequest(url string) error {
+	request, err := http.NewRequest("DELETE", url+"/remove-target-collection", nil)
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return err
 	}
 
-	return result.Error
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	log.Println(string(b))
+	return nil
 }

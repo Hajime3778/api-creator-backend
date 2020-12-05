@@ -35,7 +35,7 @@ func TestGetAll(t *testing.T) {
 		AddRow(apiId.String(), "name", "url", "description", time.Now(), time.Now())
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	apiRepository := repository.NewAPIRepository(db)
+	apiRepository := repository.NewAPIRepository(db, "")
 
 	api, err := apiRepository.GetAll()
 	assert.NoError(t, err)
@@ -51,7 +51,7 @@ func TestGetByID(t *testing.T) {
 		AddRow(apiId.String(), "name", "url", "description", time.Now(), time.Now())
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	apiRepository := repository.NewAPIRepository(db)
+	apiRepository := repository.NewAPIRepository(db, "")
 
 	api, err := apiRepository.GetByID(apiId.String())
 	assert.NoError(t, err)
@@ -67,7 +67,7 @@ func TestGetByURL(t *testing.T) {
 		AddRow(apiId.String(), "name", "url", "description", time.Now(), time.Now())
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	apiRepository := repository.NewAPIRepository(db)
+	apiRepository := repository.NewAPIRepository(db, "")
 
 	api, err := apiRepository.GetByURL(apiId.String())
 	assert.NoError(t, err)
@@ -91,7 +91,7 @@ func TestCreate(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	apiRepository := repository.NewAPIRepository(db)
+	apiRepository := repository.NewAPIRepository(db, "")
 
 	_, err := apiRepository.Create(mockAPI)
 	assert.NoError(t, err)
@@ -117,7 +117,7 @@ func TestUpdate(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	apiRepository := repository.NewAPIRepository(db)
+	apiRepository := repository.NewAPIRepository(db, "")
 
 	err := apiRepository.Update(mockAPI)
 	assert.NoError(t, err)
@@ -126,14 +126,20 @@ func TestUpdate(t *testing.T) {
 func TestDelete(t *testing.T) {
 	mock, db := setUpMockDB()
 	apiId, _ := uuid.NewRandom()
+	methodId, _ := uuid.NewRandom()
+	modelId, _ := uuid.NewRandom()
+
+	var methods []domain.Method
+	methods = append(methods, domain.Method{ID: methodId.String()})
+	model := domain.Model{ID: modelId.String()}
 
 	mock.ExpectBegin()
 	query := regexp.QuoteMeta("DELETE FROM `apis` WHERE `apis`.`id` = ?")
 	mock.ExpectExec(query).WithArgs(apiId.String()).WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
 
-	apiRepository := repository.NewAPIRepository(db)
+	apiRepository := repository.NewAPIRepository(db, "")
 
-	err := apiRepository.Delete(apiId.String())
+	err := apiRepository.Delete(apiId.String(), methods, model)
 	assert.NoError(t, err)
 }

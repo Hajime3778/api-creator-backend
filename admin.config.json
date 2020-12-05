@@ -1,5 +1,6 @@
 {
   "server": {
+    "host": "api-creator-admin",
     "port": ":4000",
     "timeout": 10
   },

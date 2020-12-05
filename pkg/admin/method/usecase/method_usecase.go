@@ -26,33 +26,33 @@ type MethodUsecase interface {
 }
 
 type methodUsecase struct {
-	apiRepo   _apiRepository.APIRepository
-	modelRepo _modelRepository.ModelRepository
-	repo      _methodRepository.MethodRepository
+	apiRepo    _apiRepository.APIRepository
+	methodRepo _methodRepository.MethodRepository
+	modelRepo  _modelRepository.ModelRepository
 }
 
 // NewMethodUsecase MethodUsecaseインターフェイスを表すオブジェクトを作成します
-func NewMethodUsecase(apiRepo _apiRepository.APIRepository, modelRepo _modelRepository.ModelRepository, repo _methodRepository.MethodRepository) MethodUsecase {
+func NewMethodUsecase(apiRepo _apiRepository.APIRepository, methodRepo _methodRepository.MethodRepository, modelRepo _modelRepository.ModelRepository) MethodUsecase {
 	return &methodUsecase{
-		apiRepo:   apiRepo,
-		modelRepo: modelRepo,
-		repo:      repo,
+		apiRepo:    apiRepo,
+		modelRepo:  modelRepo,
+		methodRepo: methodRepo,
 	}
 }
 
 // GetAll 複数のMethodを取得します
 func (u *methodUsecase) GetAll() ([]domain.Method, error) {
-	return u.repo.GetAll()
+	return u.methodRepo.GetAll()
 }
 
 // GetByID 1件のMethodを取得します
 func (u *methodUsecase) GetByID(id string) (domain.Method, error) {
-	return u.repo.GetByID(id)
+	return u.methodRepo.GetByID(id)
 }
 
 // GetListByAPIID MethodをAPIIDで複数取得します
 func (u *methodUsecase) GetListByAPIID(apiID string) ([]domain.Method, error) {
-	return u.repo.GetListByAPIID(apiID)
+	return u.methodRepo.GetListByAPIID(apiID)
 }
 
 // Create Methodを作成します
@@ -65,7 +65,7 @@ func (u *methodUsecase) Create(method domain.Method) (int, string, error) {
 	if err != nil {
 		return http.StatusBadRequest, "", err
 	}
-	id, err := u.repo.Create(method)
+	id, err := u.methodRepo.Create(method)
 	if err != nil {
 		return http.StatusInternalServerError, "", err
 	}
@@ -105,6 +105,8 @@ func (u *methodUsecase) CreateDefaultMethods(apiID string) (int, []domain.Method
 		}
 		methods = append(methods, initMethod)
 	}
+	// 本来は、1SQLの実行でやるのがベスト
+	// RollBackをgormを使用して行う必要あり
 	// getAll メソッド作成
 	methods[0].Type = "GET"
 	methods[0].Description = "すべての" + model.Name + "を取得します。"
@@ -129,13 +131,13 @@ func (u *methodUsecase) CreateDefaultMethods(apiID string) (int, []domain.Method
 	methods[4].URL = "/{" + keys[0] + "}"
 
 	for _, method := range methods {
-		_, err := u.repo.Create(method)
+		_, err := u.methodRepo.Create(method)
 		if err != nil {
 			return http.StatusInternalServerError, nil, err
 		}
 	}
 
-	createdMethods, err := u.repo.GetListByAPIID(apiID)
+	createdMethods, err := u.methodRepo.GetListByAPIID(apiID)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
@@ -149,7 +151,7 @@ func (u *methodUsecase) Update(method domain.Method) (int, error) {
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	err = u.repo.Update(method)
+	err = u.methodRepo.Update(method)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -158,14 +160,14 @@ func (u *methodUsecase) Update(method domain.Method) (int, error) {
 
 // Delete Methodを削除します
 func (u *methodUsecase) Delete(id string) error {
-	return u.repo.Delete(id)
+	return u.methodRepo.Delete(id)
 }
 
 // validateMethodURL メソッドURLを検証します
 func (u *methodUsecase) validateMethodURL(method domain.Method) error {
 	newMethod := method
 
-	methods, err := u.repo.GetListByAPIIDAndType(newMethod.APIID, newMethod.Type)
+	methods, err := u.methodRepo.GetListByAPIIDAndType(newMethod.APIID, newMethod.Type)
 	if err != nil {
 		return nil
 	}

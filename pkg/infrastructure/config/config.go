@@ -9,6 +9,7 @@ import (
 // Config 設定
 type Config struct {
 	Server struct {
+		Host    string
 		Port    string
 		Timeout int
 	}
@@ -43,4 +44,14 @@ func NewConfig(filePath string) *Config {
 	}
 
 	return c
+}
+
+// ServerBaseURL ConfigからサーバーのBaseURLを作成して返却します。
+func (c *Config) ServerBaseURL() string {
+	apiServerBaseurl := fmt.Sprintf("http://%s:%s/",
+		c.Server.Host,
+		c.Server.Port,
+	)
+
+	return apiServerBaseurl
 }

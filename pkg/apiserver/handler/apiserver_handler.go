@@ -12,11 +12,11 @@ type APIServerHandler struct {
 }
 
 // NewAPIServerHandler APIServerHandlerを作成します
-func NewAPIServerHandler(engine *gin.Engine, u usecase.APIServerUsecase) {
+func NewAPIServerHandler(router *gin.Engine, u usecase.APIServerUsecase) {
 	handler := &APIServerHandler{
 		usecase: u,
 	}
-	engine.Any("/*proxyPath", handler.RequestDocumentServer)
+	router.Any("/*proxyPath", handler.RequestDocumentServer)
 }
 
 // RequestDocumentServer リクエスト情報からAPIServerを特定し、ドキュメントに対してCRUDします

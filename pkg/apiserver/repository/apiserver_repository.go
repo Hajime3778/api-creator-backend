@@ -17,6 +17,7 @@ type APIServerRepository interface {
 	Create(modelName string, body []byte) (interface{}, int, error)
 	Update(modelName string, body []byte) (interface{}, int, error)
 	Delete(modelName string, key string, param string) (interface{}, int, error)
+	RemoveCollection(modelName string) (interface{}, int, error)
 }
 
 type apiServerRepository struct {
@@ -158,6 +159,20 @@ func (r *apiServerRepository) Delete(modelName string, key string, param string)
 	if err == mongo.ErrNoDocuments {
 		return "", http.StatusNotFound, errors.New("record not found")
 	} else if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+
+	return "", http.StatusNoContent, nil
+}
+
+// RemoveCollection Collectionを削除します
+func (r *apiServerRepository) RemoveCollection(modelName string) (interface{}, int, error) {
+	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
+	defer cancel()
+
+	collection := mongoConn.Collection(modelName)
+
+	if err := collection.Drop(ctx); err != nil {
 		return "", http.StatusInternalServerError, err
 	}
 

@@ -16,8 +16,8 @@ unittest:
 clean:
 	if [ -f ${ADMIN} ] ; then rm ${ADMIN} ; fi
 
-docker:
-	docker build -t ${ADMIN} .
+docker-build-admin:
+	docker build -t docker_admin -f ./app/api-creator-admin/admin.dockerfile .
 
 build-run:
 	docker-compose -f ./docker/docker-compose.yml up --build -d

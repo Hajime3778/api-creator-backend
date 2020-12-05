@@ -101,13 +101,9 @@ func (h *APIHandler) Update(c *gin.Context) {
 func (h *APIHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
 
-	err := h.usecase.Delete(id)
+	status, err := h.usecase.Delete(id)
 	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, domain.ErrorResponse{Error: err.Error()})
-		} else {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
-		}
+		c.JSON(status, domain.ErrorResponse{Error: err.Error()})
 		log.Println(err.Error())
 		return
 	}
