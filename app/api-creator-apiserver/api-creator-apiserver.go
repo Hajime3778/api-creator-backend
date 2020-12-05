@@ -16,6 +16,7 @@ import (
 func main() {
 	// API Server側のMongoDB接続
 	apiserverCfg := config.NewConfig("./apiserver.config.json")
+	apiServerBaseurl := apiserverCfg.ServerBaseURL()
 	mongoDB := database.NewDB(apiserverCfg)
 	apiServer := server.NewServer(apiserverCfg)
 
@@ -24,7 +25,7 @@ func main() {
 	mysqlDB := database.NewDB(mysqlCfg)
 	mysqlConn := mysqlDB.NewMysqlConnection()
 
-	apiRepository := _apiRepository.NewAPIRepository(mysqlConn)
+	apiRepository := _apiRepository.NewAPIRepository(mysqlConn, apiServerBaseurl)
 	methodRepository := _methodRepository.NewMethodRepository(mysqlConn)
 	modelRepository := _modelRepository.NewModelRepository(mysqlConn)
 	apiserverRepository := _apiserverRepository.NewAPIServerRepository(mongoDB)

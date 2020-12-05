@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -21,13 +20,15 @@ type APIRepository interface {
 }
 
 type apiRepository struct {
-	db *gorm.DB
+	db               *gorm.DB
+	apiServerBaseURL string
 }
 
 // NewAPIRepository APIRepositoryインターフェイスを表すオブジェクトを作成します
-func NewAPIRepository(db *gorm.DB) APIRepository {
+func NewAPIRepository(db *gorm.DB, apiServerBaseURL string) APIRepository {
 	return &apiRepository{
-		db: db,
+		db:               db,
+		apiServerBaseURL: apiServerBaseURL,
 	}
 }
 
@@ -93,7 +94,7 @@ func (r *apiRepository) Delete(id string, methods []domain.Method, model domain.
 			return err
 		}
 		// localで実行する場合 removeCollectionRequest("http://localhost:9000/" + model.Name)
-		if err := removeCollectionRequest("http://api-creator-apiserver/" + model.Name); err != nil {
+		if err := removeCollectionRequest(r.apiServerBaseURL + model.Name); err != nil {
 			return err
 		}
 		return nil

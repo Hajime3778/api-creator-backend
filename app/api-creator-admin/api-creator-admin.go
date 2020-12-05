@@ -21,6 +21,7 @@ func main() {
 	logger.LoggingSetting("./log/")
 	adminCfg := config.NewConfig("./admin.config.json")
 	db := database.NewDB(adminCfg)
+	apiServerBaseurl := config.NewConfig("./apiserver.config.json").ServerBaseURL()
 
 	adminServer := server.NewServer(adminCfg)
 	router := adminServer.Router
@@ -30,7 +31,7 @@ func main() {
 	conn := db.NewMysqlConnection()
 
 	//repositories
-	apiRepository := _apiRepository.NewAPIRepository(conn)
+	apiRepository := _apiRepository.NewAPIRepository(conn, apiServerBaseurl)
 	methodRepository := _methodRepository.NewMethodRepository(conn)
 	modelRepository := _modelRepository.NewModelRepository(conn)
 

@@ -45,3 +45,13 @@ func NewConfig(filePath string) *Config {
 
 	return c
 }
+
+// ServerBaseURL ConfigからサーバーのBaseURLを作成して返却します。
+func (c *Config) ServerBaseURL() string {
+	apiServerBaseurl := fmt.Sprintf("http://%s:%s/",
+		c.Server.Host,
+		c.Server.Port,
+	)
+
+	return apiServerBaseurl
+}
