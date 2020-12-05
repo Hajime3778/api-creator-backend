@@ -5,25 +5,23 @@ import (
 	"time"
 
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/config"
-	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
+	"github.com/gin-contrib/cors"
 
 	"github.com/gin-gonic/gin"
 )
 
 // Server サーバーの情報を定義します。
 type Server struct {
-	db     *database.DB
-	router *gin.Engine
+	Router *gin.Engine
 	server *http.Server
 }
 
 // NewServer Serverを初期化します
-func NewServer(c *config.Config, db *database.DB) *Server {
-	r := newRouter()
+func NewServer(c *config.Config) *Server {
+	r := NewRouter()
 	s := newServer(c, r)
 	return &Server{
-		db:     db,
-		router: r,
+		Router: r,
 		server: s,
 	}
 }
@@ -36,6 +34,20 @@ func newServer(c *config.Config, router *gin.Engine) *http.Server {
 		WriteTimeout: time.Duration(c.Server.Timeout) * time.Second,
 	}
 	return s
+}
+
+// NewRouter 新規でデフォルト設定のルーターを作成します
+func NewRouter() *gin.Engine {
+	router := gin.Default()
+
+	// アクセス許可設定
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowHeaders = []string{"Content-Type"}
+
+	router.Use(cors.New(config))
+
+	return router
 }
 
 // Run サーバーを実行します

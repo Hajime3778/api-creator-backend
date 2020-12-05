@@ -9,6 +9,7 @@ import (
 // Config 設定
 type Config struct {
 	Server struct {
+		Host    string
 		Port    string
 		Timeout int
 	}

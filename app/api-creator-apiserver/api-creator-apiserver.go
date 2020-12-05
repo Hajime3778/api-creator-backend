@@ -9,7 +9,7 @@ import (
 	"github.com/Hajime3778/api-creator-backend/pkg/apiserver/usecase"
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/config"
 	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/database"
-	"github.com/gin-gonic/gin"
+	"github.com/Hajime3778/api-creator-backend/pkg/infrastructure/server"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -17,6 +17,7 @@ func main() {
 	// API Server側のMongoDB接続
 	apiserverCfg := config.NewConfig("./apiserver.config.json")
 	mongoDB := database.NewDB(apiserverCfg)
+	apiServer := server.NewServer(apiserverCfg)
 
 	// 管理画面で設定されたMysql接続
 	mysqlCfg := config.NewConfig("./admin.config.json")
@@ -28,10 +29,10 @@ func main() {
 	modelRepository := _modelRepository.NewModelRepository(mysqlConn)
 	apiserverRepository := _apiserverRepository.NewAPIServerRepository(mongoDB)
 
-	engine := gin.Default()
+	router := apiServer.Router
 
 	apiserverUsecase := usecase.NewAPIServerUsecase(apiRepository, methodRepository, modelRepository, apiserverRepository)
-	handler.NewAPIServerHandler(engine, apiserverUsecase)
+	handler.NewAPIServerHandler(router, apiserverUsecase)
 
-	engine.Run(":9000")
+	apiServer.Run()
 }
