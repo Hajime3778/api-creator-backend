@@ -19,6 +19,9 @@ clean:
 docker-build-admin:
 	docker build -t docker_admin -f ./app/api-creator-admin/admin.dockerfile .
 
+docker-build-apiserver:
+	docker build -t docker_admin -f ./app/api-creator-apiserver/apiserver.dockerfile .
+
 build-run:
 	docker-compose -f ./docker/docker-compose.yml up --build -d
 
