@@ -79,28 +79,55 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 
 	switch method.Type {
 	case "GET":
-		if method.IsArray {
-			return u.apiserverRepo.GetList(model.Name, paramKey, paramValue)
-		}
-		return u.apiserverRepo.Get(model.Name, paramKey, paramValue)
+		return u.get(method.IsArray, model.Name, paramKey, paramValue)
 
 	case "POST":
-		err := getRequestedSchemaValidate(model.Schema, body)
-		if err != nil {
-			return "", http.StatusBadRequest, err
-		}
-		return u.apiserverRepo.Create(model.Name, body)
+		return u.create(model, body)
+
 	case "PUT":
-		err := getRequestedSchemaValidate(model.Schema, body)
-		if err != nil {
-			return "", http.StatusBadRequest, err
-		}
-		return u.apiserverRepo.Update(model.Name, body)
+		return u.update(model, body)
+
 	case "DELETE":
-		return u.apiserverRepo.Delete(model.Name, paramKey, paramValue)
+		return u.delete(model.Name, paramKey, paramValue)
+
 	default:
 		return "", http.StatusInternalServerError, errors.New("incorrect http method")
 	}
+}
+
+func (u *apiServerUsecase) get(isArray bool, modelName string, key string, value string) (interface{}, int, error) {
+	if isArray {
+		return u.apiserverRepo.GetList(modelName, key, value)
+	}
+	return u.apiserverRepo.Get(modelName, key, value)
+}
+
+func (u *apiServerUsecase) create(model domain.Model, body []byte) (interface{}, int, error) {
+	err := getRequestedSchemaValidate(model.Schema, body)
+	if err != nil {
+		return "", http.StatusBadRequest, err
+	}
+	keys, err := model.GetKeyNames()
+	if err != nil {
+		return "", http.StatusBadRequest, err
+	}
+	return u.apiserverRepo.Create(model.Name, keys[0], body)
+}
+
+func (u *apiServerUsecase) update(model domain.Model, body []byte) (interface{}, int, error) {
+	err := getRequestedSchemaValidate(model.Schema, body)
+	if err != nil {
+		return "", http.StatusBadRequest, err
+	}
+	keys, err := model.GetKeyNames()
+	if err != nil {
+		return "", http.StatusBadRequest, err
+	}
+	return u.apiserverRepo.Update(model.Name, keys[0], body)
+}
+
+func (u *apiServerUsecase) delete(modelName string, key string, value string) (interface{}, int, error) {
+	return u.apiserverRepo.Delete(modelName, key, value)
 }
 
 // getRequestedMethod リクエストされたHTTPメソッド、URL、APIから、対象のMethodを返却します

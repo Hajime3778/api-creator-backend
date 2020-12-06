@@ -14,8 +14,8 @@ import (
 type APIServerRepository interface {
 	Get(modelName string, key string, param string) (interface{}, int, error)
 	GetList(modelName string, key string, param string) (interface{}, int, error)
-	Create(modelName string, body []byte) (interface{}, int, error)
-	Update(modelName string, body []byte) (interface{}, int, error)
+	Create(modelName string, key string, body []byte) (interface{}, int, error)
+	Update(modelName string, key string, body []byte) (interface{}, int, error)
 	Delete(modelName string, key string, param string) (interface{}, int, error)
 	RemoveCollection(modelName string) (interface{}, int, error)
 }
@@ -94,7 +94,7 @@ func (r *apiServerRepository) GetList(modelName string, key string, param string
 }
 
 // Create APIServerを追加します
-func (r *apiServerRepository) Create(modelName string, body []byte) (interface{}, int, error) {
+func (r *apiServerRepository) Create(modelName string, keyName string, body []byte) (interface{}, int, error) {
 
 	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
 	defer cancel()
@@ -112,7 +112,7 @@ func (r *apiServerRepository) Create(modelName string, body []byte) (interface{}
 }
 
 // Update APIServerを更新します
-func (r *apiServerRepository) Update(modelName string, body []byte) (interface{}, int, error) {
+func (r *apiServerRepository) Update(modelName string, keyName string, body []byte) (interface{}, int, error) {
 	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
 	defer cancel()
 
