@@ -19,6 +19,10 @@ WORKDIR /app
 
 EXPOSE 9000
 
+COPY --from=builder /app/admin.config.json /app
+
+COPY --from=builder /app/apiserver.config.json /app
+
 COPY --from=builder /app/api-creator-apiserver /app
 
 CMD /app/api-creator-apiserver

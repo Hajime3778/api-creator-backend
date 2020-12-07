@@ -12,7 +12,6 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - ../admin.config.json:/app/admin.config.json
       - ../log:/app/log
       
   mysql: # Mysql container
@@ -60,9 +59,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    volumes:
-      - ../admin.config.json:/app/admin.config.json
-      - ../apiserver.config.json:/app/apiserver.config.json
 
   mongo:
     image: mongo
