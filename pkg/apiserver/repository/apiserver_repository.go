@@ -76,10 +76,12 @@ func (r *apiServerRepository) GetList(modelName string, key string, param string
 
 	var response []bson.M
 	cur, err := collection.Find(ctx, request, option)
-	if err == mongo.ErrNoDocuments {
-		return "", http.StatusNotFound, errors.New("record not found")
-	} else if err != nil {
+	if err != nil {
 		return "", http.StatusInternalServerError, err
+	}
+
+	if response == nil {
+		return "", http.StatusNotFound, errors.New("record not found")
 	}
 
 	for cur.Next(ctx) {
