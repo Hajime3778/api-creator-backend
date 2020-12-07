@@ -127,7 +127,7 @@ func (r *apiServerRepository) Update(modelName string, keyName string, body []by
 	}
 
 	// TODO: UniqueKey設定できるようにする
-	id := requestBody["id"].(string)
+	id := requestBody[keyName].(string)
 
 	err = bson.UnmarshalExtJSON(body, false, &updateModel)
 	if err != nil {
@@ -141,7 +141,7 @@ func (r *apiServerRepository) Update(modelName string, keyName string, body []by
 	if err != nil {
 		return "", http.StatusInternalServerError, err
 	}
-	return requestBody, http.StatusCreated, nil
+	return requestBody, http.StatusOK, nil
 }
 
 // Delete APIServerを削除します

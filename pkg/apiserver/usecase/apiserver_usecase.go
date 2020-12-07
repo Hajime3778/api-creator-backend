@@ -12,6 +12,7 @@ import (
 	_apiserverRepository "github.com/Hajime3778/api-creator-backend/pkg/apiserver/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
 	"github.com/xeipuuv/gojsonschema"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var (
@@ -111,6 +112,13 @@ func (u *apiServerUsecase) create(model domain.Model, body []byte) (interface{},
 	if err != nil {
 		return "", http.StatusBadRequest, err
 	}
+
+	value, err := getPropertyValue(keys[0], body)
+
+	if _, status, _ := u.apiserverRepo.Get(model.Name, keys[0], value); status != http.StatusNotFound {
+		return "", http.StatusBadRequest, errors.New("record is exists")
+	}
+
 	return u.apiserverRepo.Create(model.Name, keys[0], body)
 }
 
@@ -123,6 +131,13 @@ func (u *apiServerUsecase) update(model domain.Model, body []byte) (interface{},
 	if err != nil {
 		return "", http.StatusBadRequest, err
 	}
+
+	value, err := getPropertyValue(keys[0], body)
+
+	if _, status, _ := u.apiserverRepo.Get(model.Name, keys[0], value); status == http.StatusNotFound {
+		return "", http.StatusBadRequest, errors.New("record is not found")
+	}
+
 	return u.apiserverRepo.Update(model.Name, keys[0], body)
 }
 
@@ -217,6 +232,7 @@ func getRequestedURLParameter(requestedURL string, apiURL string, methodURL stri
 	return key, value
 }
 
+// getRequestedSchemaValidate リクエストBodyがSchemaに則っているか検証します
 func getRequestedSchemaValidate(modelSchema string, requestBody []byte) error {
 
 	schemaLoader := gojsonschema.NewStringLoader(modelSchema)
@@ -236,4 +252,20 @@ func getRequestedSchemaValidate(modelSchema string, requestBody []byte) error {
 	}
 
 	return nil
+}
+
+// getPropertyValue リクエストBody内を、keyから項目の値を取得します
+func getPropertyValue(key string, body []byte) (string, error) {
+	var bsonBody bson.M
+
+	err := bson.UnmarshalExtJSON(body, false, &bsonBody)
+	if err != nil {
+		return "", err
+	}
+
+	if bsonBody[key] == nil {
+		return "", errors.New("target property is not found")
+	}
+
+	return bsonBody[key].(string), nil
 }
