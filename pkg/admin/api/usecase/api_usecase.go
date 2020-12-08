@@ -1,12 +1,14 @@
 package usecase
 
 import (
+	"errors"
 	"net/http"
 
 	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
 	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
 	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/Hajime3778/api-creator-backend/pkg/validation"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
@@ -51,6 +53,9 @@ func (u *apiUsecase) Create(api domain.API) (int, string, error) {
 		id, _ := uuid.NewRandom()
 		api.ID = id.String()
 	}
+	if !validation.IsHalfWidthOnly(api.URL) {
+		return http.StatusBadRequest, "", errors.New("url is halfwidth only")
+	}
 	id, err := u.apiRepo.Create(api)
 	if err != nil {
 		return http.StatusInternalServerError, "", nil
@@ -61,6 +66,9 @@ func (u *apiUsecase) Create(api domain.API) (int, string, error) {
 // Update APIを更新します
 func (u *apiUsecase) Update(api domain.API) (int, error) {
 	err := u.apiRepo.Update(api)
+	if !validation.IsHalfWidthOnly(api.URL) {
+		return http.StatusBadRequest, errors.New("url is halfwidth only")
+	}
 	if err != nil {
 		return http.StatusInternalServerError, nil
 	}
