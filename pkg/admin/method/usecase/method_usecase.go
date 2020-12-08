@@ -10,6 +10,7 @@ import (
 	_methodRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/method/repository"
 	_modelRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/model/repository"
 	"github.com/Hajime3778/api-creator-backend/pkg/domain"
+	"github.com/Hajime3778/api-creator-backend/pkg/validation"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
@@ -166,6 +167,10 @@ func (u *methodUsecase) Delete(id string) error {
 // validateMethodURL メソッドURLを検証します
 func (u *methodUsecase) validateMethodURL(method domain.Method) error {
 	newMethod := method
+
+	if !validation.IsHalfWidthOnly(method.URL) {
+		return errors.New("url is halfwidth only")
+	}
 
 	methods, err := u.methodRepo.GetListByAPIIDAndType(newMethod.APIID, newMethod.Type)
 	if err != nil {
