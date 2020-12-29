@@ -80,16 +80,16 @@ func (r *apiServerRepository) GetList(modelName string, key string, param string
 		return "", http.StatusInternalServerError, err
 	}
 
-	if response == nil {
-		return "", http.StatusNotFound, errors.New("record not found")
-	}
-
 	for cur.Next(ctx) {
 		var doc bson.M
 		if err = cur.Decode(&doc); err != nil {
 			return "", http.StatusInternalServerError, err
 		}
 		response = append(response, doc)
+	}
+
+	if response == nil {
+		return "", http.StatusNotFound, errors.New("record not found")
 	}
 
 	return response, http.StatusOK, nil
