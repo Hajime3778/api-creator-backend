@@ -12,11 +12,11 @@ import (
 
 // APIServerRepository Interface
 type APIServerRepository interface {
-	Get(modelName string, key string, param string) (interface{}, int, error)
-	GetList(modelName string, key string, param string) (interface{}, int, error)
+	Get(modelName string, key string, param interface{}) (interface{}, int, error)
+	GetList(modelName string, key string, param interface{}) (interface{}, int, error)
 	Create(modelName string, key string, body []byte) (interface{}, int, error)
 	Update(modelName string, key string, body []byte) (interface{}, int, error)
-	Delete(modelName string, key string, param string) (interface{}, int, error)
+	Delete(modelName string, key string, param interface{}) (interface{}, int, error)
 	RemoveCollection(modelName string) (interface{}, int, error)
 }
 
@@ -32,7 +32,7 @@ func NewAPIServerRepository(db *database.DB) APIServerRepository {
 }
 
 // Get APIServerを1件取得します
-func (r *apiServerRepository) Get(modelName string, key string, param string) (interface{}, int, error) {
+func (r *apiServerRepository) Get(modelName string, key string, param interface{}) (interface{}, int, error) {
 	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
 	defer cancel()
 
@@ -57,7 +57,7 @@ func (r *apiServerRepository) Get(modelName string, key string, param string) (i
 }
 
 // GetList 複数のAPIServerを取得します
-func (r *apiServerRepository) GetList(modelName string, key string, param string) (interface{}, int, error) {
+func (r *apiServerRepository) GetList(modelName string, key string, param interface{}) (interface{}, int, error) {
 	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
 	defer cancel()
 
@@ -129,7 +129,7 @@ func (r *apiServerRepository) Update(modelName string, keyName string, body []by
 	}
 
 	// TODO: UniqueKey設定できるようにする
-	id := requestBody[keyName].(string)
+	id := requestBody[keyName].(interface{})
 
 	err = bson.UnmarshalExtJSON(body, false, &updateModel)
 	if err != nil {
@@ -147,7 +147,7 @@ func (r *apiServerRepository) Update(modelName string, keyName string, body []by
 }
 
 // Delete APIServerを削除します
-func (r *apiServerRepository) Delete(modelName string, key string, param string) (interface{}, int, error) {
+func (r *apiServerRepository) Delete(modelName string, key string, param interface{}) (interface{}, int, error) {
 	mongoConn, ctx, cancel := r.db.NewMongoDBConnection()
 	defer cancel()
 
