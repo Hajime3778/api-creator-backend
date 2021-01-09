@@ -1,9 +1,12 @@
 package usecase
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 
 	_apiRepository "github.com/Hajime3778/api-creator-backend/pkg/admin/api/repository"
@@ -76,7 +79,10 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 	}
 
 	// リクエストされたパラメータを取得
-	paramKey, paramValue := getRequestedURLParameter(url, api.URL, method.URL)
+	paramKey, paramValue, err := getRequestedURLParameter(url, api.URL, method.URL, model.Schema)
+	if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
 
 	switch method.Type {
 	case "GET":
@@ -96,7 +102,7 @@ func (u *apiServerUsecase) RequestDocumentServer(httpMethod string, url string, 
 	}
 }
 
-func (u *apiServerUsecase) get(isArray bool, modelName string, key string, value string) (interface{}, int, error) {
+func (u *apiServerUsecase) get(isArray bool, modelName string, key string, value interface{}) (interface{}, int, error) {
 	if isArray {
 		return u.apiserverRepo.GetList(modelName, key, value)
 	}
@@ -114,6 +120,9 @@ func (u *apiServerUsecase) create(model domain.Model, body []byte) (interface{},
 	}
 
 	value, err := getPropertyValue(keys[0], body)
+	if err != nil {
+		return "", http.StatusBadRequest, err
+	}
 
 	if _, status, _ := u.apiserverRepo.Get(model.Name, keys[0], value); status != http.StatusNotFound {
 		return "", http.StatusBadRequest, errors.New("record is exists")
@@ -141,7 +150,7 @@ func (u *apiServerUsecase) update(model domain.Model, body []byte) (interface{},
 	return u.apiserverRepo.Update(model.Name, keys[0], body)
 }
 
-func (u *apiServerUsecase) delete(modelName string, key string, value string) (interface{}, int, error) {
+func (u *apiServerUsecase) delete(modelName string, key string, value interface{}) (interface{}, int, error) {
 	return u.apiserverRepo.Delete(modelName, key, value)
 }
 
@@ -206,9 +215,9 @@ func (u *apiServerUsecase) getRequestedMethod(httpMethod string, requestedURL st
 }
 
 // getRequestedURLParameter リクエストされたURLパラメータとKeyを取得します
-func getRequestedURLParameter(requestedURL string, apiURL string, methodURL string) (string, string) {
-	key := ""
-	value := ""
+func getRequestedURLParameter(requestedURL string, apiURL string, methodURL string, modelSchema string) (string, interface{}, error) {
+	var key string
+	var value string
 
 	if methodURL != "" {
 		// {}で囲まれた中身のみ取得
@@ -221,6 +230,10 @@ func getRequestedURLParameter(requestedURL string, apiURL string, methodURL stri
 		methodURL = re.ReplaceAllString(methodURL, "")
 	}
 
+	if key == "" {
+		return "", "", nil
+	}
+
 	// リクエストされたパラメータを取得
 	value = strings.Replace(requestedURL, apiURL+methodURL, "", 1)
 
@@ -229,7 +242,37 @@ func getRequestedURLParameter(requestedURL string, apiURL string, methodURL stri
 		value = value[1:]
 	}
 
-	return key, value
+    var schemaMap map[string]interface{}
+    err := json.Unmarshal([]byte(modelSchema), &schemaMap)
+    if err != nil {
+        fmt.Println(err)
+        return "", "", errors.New("model schema Unmarshal failed")
+	}
+
+	property := schemaMap["properties"].(map[string]interface{})[key].(map[string]interface{})
+	keyType := property["type"].(string)
+
+	switch keyType {
+	case "number":
+		intValue, err := strconv.Atoi(value)
+		if err != nil {
+			errMsg := fmt.Sprintf("invalid convert number%s", value)
+			return "", "", errors.New(errMsg)
+		}
+		return key, intValue, nil
+	case "integer":
+		intValue, err := strconv.Atoi(value)
+		if err != nil {
+			errMsg := fmt.Sprintf("invalid convert number%s", value)
+			return "", "", errors.New(errMsg)
+		}
+		return key, intValue, nil
+    case "string":
+        return key, value, nil
+	default:
+		errMsg := fmt.Sprintf("not an allowed id type%s", keyType)
+        return "", "", errors.New(errMsg)
+    }
 }
 
 // getRequestedSchemaValidate リクエストBodyがSchemaに則っているか検証します
@@ -255,7 +298,7 @@ func getRequestedSchemaValidate(modelSchema string, requestBody []byte) error {
 }
 
 // getPropertyValue リクエストBody内を、keyから項目の値を取得します
-func getPropertyValue(key string, body []byte) (string, error) {
+func getPropertyValue(key string, body []byte) (interface{}, error) {
 	var bsonBody bson.M
 
 	err := bson.UnmarshalExtJSON(body, false, &bsonBody)
@@ -267,5 +310,5 @@ func getPropertyValue(key string, body []byte) (string, error) {
 		return "", errors.New("target property is not found")
 	}
 
-	return bsonBody[key].(string), nil
+	return bsonBody[key], nil
 }
